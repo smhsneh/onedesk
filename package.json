@@ -1,0 +1,14 @@
+{
+  "name": "onedesk",
+  "private": true,
+  "version": "1.0.0",
+  "scripts": {
+    "client": "npm run dev --prefix client",
+    "server": "npm run dev --prefix server",
+    "dev": "concurrently \"npm run server\" \"npm run client\""
+  },
+  "dependencies": {
+    "concurrently": "^9.2.1",
+    "dotenv": "^17.4.2"
+  }
+}
