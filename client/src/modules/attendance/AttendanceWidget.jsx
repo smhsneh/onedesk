@@ -1,22 +1,62 @@
 import GlassCard from "../../components/common/GlassCard";
-import { BarChart3 } from "lucide-react";
+
+import {
+  BarChart3,
+} from "lucide-react";
 
 const attendance = [
   {
     subject: "dbms",
-    value: 82,
+    attended: 78,
+    total: 100,
   },
   {
     subject: "os",
-    value: 74,
+    attended: 91,
+    total: 100,
   },
   {
     subject: "cn",
-    value: 91,
+    attended: 65,
+    total: 100,
+  },
+  {
+    subject: "dsp",
+    attended: 88,
+    total: 100,
   },
 ];
 
 const AttendanceWidget = () => {
+  const calculatePercentage = (
+    attended,
+    total
+  ) => {
+    return Math.round(
+      (attended / total) * 100
+    );
+  };
+
+  const getBarColor = (percentage) => {
+    if (percentage >= 75) {
+      return "bg-[#3ea66b]";
+    }
+
+    return "bg-[#d95c5c]";
+  };
+
+  const average = Math.round(
+    attendance.reduce((acc, item) => {
+      return (
+        acc +
+        calculatePercentage(
+          item.attended,
+          item.total
+        )
+      );
+    }, 0) / attendance.length
+  );
+
   return (
     <GlassCard
       gradient="
@@ -24,86 +64,242 @@ const AttendanceWidget = () => {
       via-[#c7f9cc]
       to-[#edfdf0]
       "
-      className="col-span-3 row-span-2"
+      className="col-span-5 row-span-2"
     >
-      <div className="flex items-center justify-between mb-6">
+      {/* header */}
+      <div className="flex items-center justify-between mb-5">
         <div>
           <p
             className="
-              text-[11px]
+              text-[13px]
               uppercase
-              tracking-[0.25em]
-              text-black/40
+              tracking-[0.28em]
+              text-black/45
               mb-3
+              font-semibold
             "
           >
             attendance
           </p>
 
-          <h2
-            className="
-              text-6xl
-              font-black
-              tracking-[-0.04em]
-              leading-none
-            "
-          >
-            82%
-          </h2>
-
-          <p className="text-black/50 mt-2">
-            semester average
-          </p>
-        </div>
-
-        <BarChart3
-          size={18}
-          className="text-black/40"
-        />
-      </div>
-
-      <div className="space-y-5">
-        {attendance.map((item) => (
-          <div key={item.subject}>
-            <div className="flex justify-between mb-2">
-              <span className="capitalize font-semibold">
-                {item.subject}
-              </span>
-
-              <span className="text-sm font-semibold text-black/55">
-                {item.value}%
-              </span>
-            </div>
-
-            <div
+          <div className="flex items-end gap-3">
+            <h2
               className="
-                w-full
-                h-[7px]
+                text-6xl
+                font-black
+                tracking-[-0.04em]
+                leading-none
+              "
+            >
+              {average}%
+            </h2>
+
+            <span
+              className="
+                mb-2
+
+                px-3
+                py-1
 
                 rounded-full
 
-                bg-white/40
+                bg-white/45
 
-                overflow-hidden
+                text-xs
+                font-semibold
+                text-black/50
               "
             >
+              avg
+            </span>
+          </div>
+        </div>
+
+        <button
+          className="
+            h-10
+            w-10
+
+            rounded-2xl
+
+            bg-white/25
+
+            border border-white/30
+
+            flex
+            items-center
+            justify-center
+
+            transition-all
+            duration-300
+
+            hover:bg-white/40
+            hover:scale-105
+
+            active:scale-95
+          "
+        >
+          <BarChart3
+            size={18}
+            className="text-black/40"
+          />
+        </button>
+      </div>
+
+      {/* attendance grid */}
+      <div
+        className="
+          grid
+          grid-cols-2
+
+          gap-4
+
+          max-h-[235px]
+
+          overflow-y-auto
+
+          pr-1
+          pb-2
+        "
+      >
+        {attendance.map((item) => {
+          const percentage =
+            calculatePercentage(
+              item.attended,
+              item.total
+            );
+
+          return (
+            <div
+              key={item.subject}
+              className="
+                min-w-0
+
+                rounded-2xl
+
+                bg-white/20
+
+                border border-white/25
+
+                p-4
+              "
+            >
+              {/* top */}
+              <div className="flex items-center justify-between mb-3">
+                <span className="capitalize font-semibold text-[18px]">
+                  {item.subject}
+                </span>
+
+                <span
+                  className={`
+                    text-sm
+                    font-bold
+
+                    ${
+                      percentage >= 75
+                        ? "text-[#2f8f46]"
+                        : "text-[#d9485f]"
+                    }
+                  `}
+                >
+                  {percentage}%
+                </span>
+              </div>
+
+              {/* progress */}
               <div
                 className="
-                  h-full
+                  w-full
+                  h-[7px]
+
                   rounded-full
 
-                  bg-[#4f8f68]
+                  bg-white/40
 
-                  transition-all
-                  duration-500
+                  overflow-hidden
+
+                  mb-4
                 "
-                style={{
-                  width: `${item.value}%`,
-                }}
-              />
+              >
+                <div
+                  className={`
+                    h-full
+                    rounded-full
+
+                    transition-all
+                    duration-500
+
+                    ${getBarColor(
+                      percentage
+                    )}
+                  `}
+                  style={{
+                    width: `${percentage}%`,
+                  }}
+                />
+              </div>
+
+              {/* inputs */}
+              <div className="flex items-center gap-2 w-full">
+                <input
+                  type="number"
+                  defaultValue={item.attended}
+                  className="
+                    min-w-0
+                    flex-1
+
+                    h-10
+
+                    rounded-xl
+
+                    bg-white/45
+
+                    border border-white/30
+
+                    px-3
+
+                    text-sm
+                    font-semibold
+
+                    outline-none
+
+                    focus:bg-white/60
+                  "
+                />
+
+                <span className="text-black/35 text-sm shrink-0">
+                  /
+                </span>
+
+                <input
+                  type="number"
+                  defaultValue={item.total}
+                  className="
+                    min-w-0
+                    flex-1
+
+                    h-10
+
+                    rounded-xl
+
+                    bg-white/45
+
+                    border border-white/30
+
+                    px-3
+
+                    text-sm
+                    font-semibold
+
+                    outline-none
+
+                    focus:bg-white/60
+                  "
+                />
+              </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
     </GlassCard>
   );

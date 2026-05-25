@@ -7,6 +7,7 @@ import { useState } from "react";
 import {
   ChevronLeft,
   ChevronRight,
+  CalendarDays,
 } from "lucide-react";
 
 const CalendarWidget = () => {
@@ -25,28 +26,103 @@ const CalendarWidget = () => {
         <div>
           <p
             className="
-              text-[11px]
+              text-[13px]
               uppercase
-              tracking-[0.25em]
-              text-black/40
+              tracking-[0.28em]
+              text-black/45
               mb-3
+              font-semibold
             "
           >
             may 2026
           </p>
         </div>
 
-        <p className="text-black/40 text-sm">
-          monthly view
-        </p>
+        <button
+          className="
+            h-10
+            w-10
+
+            rounded-2xl
+
+            bg-white/25
+
+            border border-white/30
+
+            flex
+            items-center
+            justify-center
+
+            transition-all
+            duration-300
+
+            hover:bg-white/40
+            hover:scale-105
+
+            active:scale-95
+          "
+        >
+          <CalendarDays
+            size={18}
+            className="text-black/40"
+          />
+        </button>
       </div>
 
       <div className="calendar-wrapper">
         <Calendar
           onChange={setDate}
           value={date}
-          prevLabel={<ChevronLeft size={16} />}
-          nextLabel={<ChevronRight size={16} />}
+          prevLabel={
+            <div
+              className="
+                h-8
+                w-8
+
+                rounded-xl
+
+                bg-white/35
+
+                border border-white/30
+
+                flex
+                items-center
+                justify-center
+
+                transition-all
+                duration-300
+
+                hover:bg-white/50
+              "
+            >
+              <ChevronLeft size={16} />
+            </div>
+          }
+          nextLabel={
+            <div
+              className="
+                h-8
+                w-8
+
+                rounded-xl
+
+                bg-white/35
+
+                border border-white/30
+
+                flex
+                items-center
+                justify-center
+
+                transition-all
+                duration-300
+
+                hover:bg-white/50
+              "
+            >
+              <ChevronRight size={16} />
+            </div>
+          }
           next2Label={null}
           prev2Label={null}
           showNeighboringMonth={true}

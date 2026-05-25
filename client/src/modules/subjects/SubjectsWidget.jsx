@@ -1,21 +1,26 @@
 import GlassCard from "../../components/common/GlassCard";
-import { BookOpen } from "lucide-react";
+import {
+  BookOpen,
+  Plus,
+  X,
+} from "lucide-react";
 
 const subjects = [
   {
     name: "dbms",
-    attendance: 82,
     credits: 4,
   },
   {
     name: "os",
-    attendance: 74,
     credits: 3,
   },
   {
     name: "cn",
-    attendance: 91,
     credits: 4,
+  },
+  {
+    name: "dsp",
+    credits: 3,
   },
 ];
 
@@ -23,9 +28,9 @@ const SubjectsWidget = () => {
   return (
     <GlassCard
       gradient="
-      from-[#f3d9fa]
-      via-[#ead7ff]
-      to-[#f8f2ff]
+      from-[#fff1d6]
+      via-[#ffe5b4]
+      to-[#fff7e8]
       "
       className="col-span-3 row-span-2"
     >
@@ -33,88 +38,219 @@ const SubjectsWidget = () => {
         <div>
           <p
             className="
-              text-[11px]
+              text-[13px]
               uppercase
-              tracking-[0.25em]
-              text-black/40
+              tracking-[0.28em]
+              text-black/45
               mb-3
+              font-semibold
             "
           >
-            subjects
+            subjects · sem 4
           </p>
-
-          <h2
-            className="
-              text-[30px]
-              font-black
-              tracking-[-0.04em]
-            "
-          >
-            sem 4
-          </h2>
         </div>
 
-        <BookOpen
-          size={18}
-          className="text-black/40"
-        />
+        <button
+          className="
+            h-10
+            w-10
+
+            rounded-2xl
+
+            bg-white/25
+
+            border border-white/30
+
+            flex
+            items-center
+            justify-center
+
+            transition-all
+            duration-300
+
+            hover:bg-white/40
+            hover:scale-105
+
+            active:scale-95
+          "
+        >
+          <BookOpen
+            size={18}
+            className="text-black/40"
+          />
+        </button>
       </div>
 
-      <div className="space-y-4">
+      {/* subjects */}
+      <div
+        className="
+          space-y-3
+
+          max-h-[190px]
+
+          overflow-y-auto
+
+          pr-1
+
+          smooth-scroll
+        "
+      >
         {subjects.map((subject) => (
-          <div
+          <button
             key={subject.name}
             className="
+              w-full
+
               rounded-2xl
               bg-white/35
+
               border border-white/30
 
-              p-4
+              px-4
+              py-3
+
+              text-left
+
+              flex
+              items-center
+              justify-between
+
+              transition-all
+              duration-300
+
+              hover:bg-white/45
             "
           >
-            <div className="flex justify-between mb-2">
-              <h3 className="capitalize font-semibold">
-                {subject.name}
-              </h3>
+            <h3 className="capitalize font-semibold">
+              {subject.name}
+            </h3>
 
-              <span className="text-sm font-semibold text-black/55">
-                {subject.attendance}%
-              </span>
-            </div>
-
-            <div
-              className="
-                w-full
-                h-[7px]
-
-                rounded-full
-
-                bg-white/40
-
-                overflow-hidden
-              "
-            >
-              <div
+            <div className="flex items-center gap-2">
+              <span
                 className="
-                  h-full
+                  text-xs
+                  font-semibold
+
+                  px-2
+                  py-1
+
                   rounded-full
 
-                  bg-[#8c68b8]
+                  bg-white/45
+
+                  text-black/55
+                "
+              >
+                {subject.credits}cr
+              </span>
+
+              <X
+                size={15}
+                className="
+                  text-black/25
+
+                  hover:text-black/50
 
                   transition-all
-                  duration-500
                 "
-                style={{
-                  width: `${subject.attendance}%`,
-                }}
               />
             </div>
-
-            <p className="text-xs text-black/40 mt-2">
-              {subject.credits} credits
-            </p>
-          </div>
+          </button>
         ))}
+      </div>
+
+      {/* add subject */}
+      <div
+        className="
+          mt-4
+
+          rounded-2xl
+
+          border border-dashed
+          border-[#f3d59a]
+
+          bg-white/20
+
+          p-2
+
+          flex
+          items-center
+          gap-2
+        "
+      >
+        <input
+          type="text"
+          placeholder="Subject name"
+          className="
+            flex-1
+
+            h-11
+
+            rounded-xl
+
+            bg-white/45
+
+            border border-white/30
+
+            px-4
+
+            outline-none
+
+            text-sm
+            font-medium
+
+            placeholder:text-black/35
+          "
+        />
+
+        <input
+          type="number"
+          placeholder="cr"
+          className="
+            w-[56px]
+
+            h-11
+
+            rounded-xl
+
+            bg-white/45
+
+            border border-white/30
+
+            px-3
+
+            outline-none
+
+            text-sm
+            font-semibold
+          "
+        />
+
+        <button
+          className="
+            h-11
+            w-11
+
+            rounded-xl
+
+            bg-[#1c1c35]
+
+            flex
+            items-center
+            justify-center
+
+            text-white
+
+            transition-all
+            duration-300
+
+            hover:scale-105
+
+            active:scale-95
+          "
+        >
+          <Plus size={18} />
+        </button>
       </div>
     </GlassCard>
   );

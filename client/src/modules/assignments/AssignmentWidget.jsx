@@ -1,14 +1,30 @@
 import GlassCard from "../../components/common/GlassCard";
-import { ClipboardList } from "lucide-react";
+import {
+  ClipboardList,
+  Plus,
+  X,
+} from "lucide-react";
 
 const assignments = [
   {
     title: "dbms assignment",
     due: "tomorrow",
+    urgent: true,
   },
   {
     title: "os lab report",
     due: "3 days",
+    urgent: false,
+  },
+  {
+    title: "cn module 5",
+    due: "5 days",
+    urgent: false,
+  },
+  {
+    title: "dsp project",
+    due: "8 days",
+    urgent: false,
   },
 ];
 
@@ -26,45 +42,87 @@ const AssignmentWidget = () => {
         <div>
           <p
             className="
-              text-[11px]
+              text-[13px]
               uppercase
-              tracking-[0.25em]
-              text-black/40
+              tracking-[0.28em]
+              text-black/45
               mb-3
+              font-semibold
             "
           >
             assignments
           </p>
 
-          <h2
-            className="
-              text-6xl
-              font-black
-              tracking-[-0.04em]
-              leading-none
-            "
-          >
-            12
-          </h2>
+          <div className="flex items-end gap-3">
+            <h2
+              className="
+                text-6xl
+                font-black
+                tracking-[-0.04em]
+                leading-none
+              "
+            >
+              12
+            </h2>
 
-          <p className="text-black/50 mt-2">
-            pending submissions
-          </p>
+            <span className="text-black/50 mb-2">
+              pending
+            </span>
+          </div>
         </div>
 
-        <ClipboardList
-          size={18}
-          className="text-black/40"
-        />
+        <button
+          className="
+            h-10
+            w-10
+
+            rounded-2xl
+
+            bg-white/25
+
+            border border-white/30
+
+            flex
+            items-center
+            justify-center
+
+            transition-all
+            duration-300
+
+            hover:bg-white/40
+            hover:scale-105
+          "
+        >
+          <ClipboardList
+            size={18}
+            className="text-black/40"
+          />
+        </button>
       </div>
 
-      <div className="space-y-3">
+      {/* assignment list */}
+      <div
+        className="
+          space-y-3
+
+          max-h-[190px]
+
+          overflow-y-auto
+
+          pr-1
+
+          smooth-scroll
+        "
+      >
         {assignments.map((assignment) => (
-          <div
+          <button
             key={assignment.title}
             className="
+              w-full
+
               rounded-2xl
               bg-white/35
+
               border border-white/30
 
               px-4
@@ -73,17 +131,148 @@ const AssignmentWidget = () => {
               flex
               items-center
               justify-between
+
+              transition-all
+              duration-300
+
+              hover:bg-white/45
             "
           >
-            <span className="capitalize font-medium">
-              {assignment.title}
-            </span>
+            <div className="flex items-center gap-3">
+              <div
+                className="
+                  h-5
+                  w-5
 
-            <span className="text-xs text-black/40">
-              {assignment.due}
-            </span>
-          </div>
+                  rounded-full
+
+                  border-2
+                  border-[#7aa7e8]
+                "
+              />
+
+              <span className="capitalize font-semibold">
+                {assignment.title}
+              </span>
+            </div>
+
+            <div className="flex items-center gap-3">
+              <span
+                className={`
+                  text-xs
+                  font-semibold
+
+                  ${
+                    assignment.urgent
+                      ? "text-[#d9485f]"
+                      : "text-black/45"
+                  }
+                `}
+              >
+                {assignment.due}
+              </span>
+
+              <X
+                size={16}
+                className="
+                  text-black/25
+
+                  hover:text-black/50
+
+                  transition-all
+                "
+              />
+            </div>
+          </button>
         ))}
+      </div>
+
+      {/* add tray */}
+      <div
+        className="
+          mt-4
+
+          rounded-2xl
+
+          border border-dashed
+          border-[#bfd8ff]
+
+          bg-white/20
+
+          p-2
+
+          flex
+          items-center
+          gap-2
+        "
+      >
+        <input
+          type="text"
+          placeholder="Assignment name"
+          className="
+            flex-1
+
+            h-11
+
+            rounded-xl
+
+            bg-white/45
+
+            border border-white/30
+
+            px-4
+
+            outline-none
+
+            text-sm
+            font-medium
+
+            placeholder:text-black/35
+          "
+        />
+
+        <input
+          type="date"
+          className="
+            h-11
+
+            rounded-xl
+
+            bg-white/45
+
+            border border-white/30
+
+            px-3
+
+            outline-none
+
+            text-sm
+          "
+        />
+
+        <button
+          className="
+            h-11
+            w-11
+
+            rounded-xl
+
+            bg-[#1c1c35]
+
+            flex
+            items-center
+            justify-center
+
+            text-white
+
+            transition-all
+            duration-300
+
+            hover:scale-105
+          "
+        >
+          <Plus size={18} />
+        </button>
       </div>
     </GlassCard>
   );

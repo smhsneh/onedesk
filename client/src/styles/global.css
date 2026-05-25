@@ -156,3 +156,14 @@ body,
 .calendar-wrapper .react-calendar__tile::after {
   display: none;
 }
+
+/* .smooth-scroll {
+  scrollbar-width: none;
+
+  scroll-behavior: smooth;
+}
+
+.smooth-scroll::-webkit-scrollbar {
+  width: 0px;
+  display: none;
+} */

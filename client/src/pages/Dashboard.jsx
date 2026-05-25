@@ -17,6 +17,7 @@ function Dashboard() {
         pb-20
         bg-[#f7f6f4]
         relative
+        overflow-hidden
       "
       style={{
         fontFamily: "Manrope, sans-serif",
@@ -64,7 +65,7 @@ function Dashboard() {
         />
       </div>
 
-      {/* grain */}
+      {/* subtle grain */}
       <div
         className="
           absolute
@@ -79,23 +80,114 @@ function Dashboard() {
       />
 
       <div className="relative z-10">
+        {/* header */}
         <DashboardHeader />
 
-        <BentoGrid>
-          <OverviewWidget />
+        {/* workspace container */}
+        <div className="px-5 md:px-7 mt-6">
+          <div
+            className="
+              relative
 
-          <AttendanceWidget />
+              rounded-[42px]
 
-          <SubjectsWidget />
+              bg-white/30
 
-          <CalendarWidget />
+              backdrop-blur-2xl
 
-          <AssignmentWidget />
+              border border-white/35
 
-          <ExamWidget />
+              shadow-[0_10px_50px_rgba(0,0,0,0.05)]
 
-          <CGPAWidget />
-        </BentoGrid>
+              p-5
+              md:p-6
+
+              overflow-hidden
+            "
+          >
+            {/* glow layers */}
+            <div className="absolute inset-0 pointer-events-none">
+              <div
+                className="
+                  absolute
+
+                  -top-20
+                  left-20
+
+                  h-[280px]
+                  w-[280px]
+
+                  rounded-full
+
+                  bg-white
+
+                  opacity-[0.22]
+
+                  blur-[100px]
+                "
+              />
+
+              <div
+                className="
+                  absolute
+
+                  bottom-0
+                  right-10
+
+                  h-[240px]
+                  w-[240px]
+
+                  rounded-full
+
+                  bg-[#ffe5ec]
+
+                  opacity-[0.18]
+
+                  blur-[100px]
+                "
+              />
+
+              <div
+                className="
+                  absolute
+
+                  top-[35%]
+                  left-[40%]
+
+                  h-[220px]
+                  w-[220px]
+
+                  rounded-full
+
+                  bg-[#d6e4ff]
+
+                  opacity-[0.15]
+
+                  blur-[90px]
+                "
+              />
+            </div>
+
+            {/* actual dashboard */}
+            <div className="relative z-10">
+              <BentoGrid>
+                <OverviewWidget />
+
+                <AttendanceWidget />
+
+                <SubjectsWidget />
+
+                <CalendarWidget />
+
+                <AssignmentWidget />
+
+                <ExamWidget />
+
+                <CGPAWidget />
+              </BentoGrid>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
