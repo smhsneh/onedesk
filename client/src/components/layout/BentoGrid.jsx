@@ -1,6 +1,13 @@
+import { motion } from "framer-motion";
+
 const BentoGrid = ({ children }) => {
   return (
-    <div
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{
+        duration: 0.5,
+      }}
       className="
         grid
         grid-cols-12
@@ -14,7 +21,7 @@ const BentoGrid = ({ children }) => {
       "
     >
       {children}
-    </div>
+    </motion.div>
   );
 };
 

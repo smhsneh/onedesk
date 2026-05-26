@@ -1,4 +1,5 @@
 import GlassCard from "../../components/common/GlassCard";
+
 import {
   FileText,
   Plus,
@@ -24,6 +25,30 @@ const exams = [
     remaining: "24d",
     color: "bg-[#7aa8ff]",
   },
+  {
+    subject: "ai viva",
+    date: "22 june",
+    remaining: "28d",
+    color: "bg-[#8bdb81]",
+  },
+  {
+    subject: "ml practical",
+    date: "30 june",
+    remaining: "36d",
+    color: "bg-[#c19cff]",
+  },
+  {
+    subject: "java lab",
+    date: "4 july",
+    remaining: "40d",
+    color: "bg-[#ffb86b]",
+  },
+  {
+    subject: "react review",
+    date: "11 july",
+    remaining: "47d",
+    color: "bg-[#7ed6ff]",
+  },
 ];
 
 const ExamWidget = () => {
@@ -34,9 +59,13 @@ const ExamWidget = () => {
       via-[#ffe5ec]
       to-[#fff1f4]
       "
-      className="col-span-4 row-span-3"
+      className="
+        col-span-4
+        row-span-3
+      "
     >
-      <div className="flex items-center justify-between mb-6">
+      {/* header */}
+      <div className="flex items-center justify-between mb-6 shrink-0">
         <div>
           <p
             className="
@@ -81,92 +110,98 @@ const ExamWidget = () => {
         </button>
       </div>
 
+      {/* scroll section */}
       <div
         className="
-          space-y-3
-
-          max-h-[210px]
+          flex-1
+          min-h-0
 
           overflow-y-auto
 
           pr-1
-
-          smooth-scroll
+          pb-2
         "
+        style={{
+          scrollbarGutter: "stable",
+        }}
       >
-        {exams.map((exam) => (
-          <button
-            key={exam.subject}
-            className="
-              w-full
+        <div className="space-y-3">
+          {exams.map((exam) => (
+            <button
+              key={exam.subject}
+              className="
+                w-full
 
-              rounded-2xl
-              bg-white/35
+                rounded-2xl
+                bg-white/35
 
-              border border-white/30
+                border border-white/30
 
-              px-4
-              py-3
+                px-4
+                py-3
 
-              text-left
+                text-left
 
-              transition-all
-              duration-300
+                transition-all
+                duration-300
 
-              hover:bg-white/45
-            "
-          >
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div
-                  className={`
-                    w-2.5
-                    h-2.5
-                    rounded-full
-                    ${exam.color}
-                  `}
-                />
+                hover:bg-white/45
+              "
+            >
+              <div className="flex items-center justify-between gap-3">
+                <div className="flex items-center gap-3 min-w-0">
+                  <div
+                    className={`
+                      w-2.5
+                      h-2.5
+                      rounded-full
+                      shrink-0
+                      ${exam.color}
+                    `}
+                  />
 
-                <span className="capitalize font-semibold">
-                  {exam.subject}
-                </span>
+                  <span className="capitalize font-semibold truncate">
+                    {exam.subject}
+                  </span>
+                </div>
+
+                <div className="flex items-center gap-2 shrink-0">
+                  <span className="text-sm text-black/50">
+                    {exam.date}
+                  </span>
+
+                  <span
+                    className="
+                      text-xs
+                      font-semibold
+
+                      px-2
+                      py-1
+
+                      rounded-full
+
+                      bg-white/50
+                    "
+                  >
+                    {exam.remaining}
+                  </span>
+
+                  <X
+                    size={15}
+                    className="text-black/25"
+                  />
+                </div>
               </div>
-
-              <div className="flex items-center gap-2">
-                <span className="text-sm text-black/50">
-                  {exam.date}
-                </span>
-
-                <span
-                  className="
-                    text-xs
-                    font-semibold
-
-                    px-2
-                    py-1
-
-                    rounded-full
-
-                    bg-white/50
-                  "
-                >
-                  {exam.remaining}
-                </span>
-
-                <X
-                  size={15}
-                  className="text-black/25"
-                />
-              </div>
-            </div>
-          </button>
-        ))}
+            </button>
+          ))}
+        </div>
       </div>
 
       {/* add tray */}
       <div
         className="
           mt-4
+          shrink-0
 
           rounded-2xl
 
@@ -187,6 +222,7 @@ const ExamWidget = () => {
           placeholder="Exam name"
           className="
             flex-1
+            min-w-0
 
             h-11
 
@@ -230,6 +266,8 @@ const ExamWidget = () => {
           className="
             h-11
             w-11
+
+            shrink-0
 
             rounded-xl
 

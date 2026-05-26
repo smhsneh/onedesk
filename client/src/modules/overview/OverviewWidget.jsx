@@ -1,4 +1,5 @@
 import GlassCard from "../../components/common/GlassCard";
+
 import {
   AlertTriangle,
   ChevronRight,
@@ -25,6 +26,26 @@ const alerts = [
     time: "next week",
     danger: false,
   },
+  {
+    title: "ai presentation pending",
+    time: "tomorrow",
+    danger: true,
+  },
+  {
+    title: "react submission",
+    time: "2 days",
+    danger: false,
+  },
+  {
+    title: "java lab viva",
+    time: "4 days",
+    danger: false,
+  },
+  {
+    title: "ml quiz upcoming",
+    time: "5 days",
+    danger: false,
+  },
 ];
 
 const OverviewWidget = () => {
@@ -35,9 +56,13 @@ const OverviewWidget = () => {
       via-[#ffe5ec]
       to-[#fff1f4]
       "
-      className="col-span-4 row-span-2"
+      className="
+        col-span-4
+        row-span-2
+      "
     >
-      <div className="flex items-start justify-between mb-8">
+      {/* header */}
+      <div className="flex items-start justify-between mb-8 shrink-0">
         <div>
           <p
             className="
@@ -119,87 +144,93 @@ const OverviewWidget = () => {
         </button>
       </div>
 
+      {/* scroll section */}
       <div
         className="
-          space-y-3
-
-          max-h-[160px]
+          flex-1
+          min-h-0
 
           overflow-y-auto
 
           pr-1
-
-          smooth-scroll
+          pb-2
         "
+        style={{
+          scrollbarGutter: "stable",
+        }}
       >
-        {alerts.map((alert) => (
-          <button
-            key={alert.title}
-            className="
-              w-full
+        <div className="space-y-3">
+          {alerts.map((alert) => (
+            <button
+              key={alert.title}
+              className="
+                w-full
 
-              rounded-2xl
-              bg-white/35
+                rounded-2xl
+                bg-white/35
 
-              border border-white/30
+                border border-white/30
 
-              px-4
-              py-3
+                px-4
+                py-3
 
-              flex
-              items-center
-              justify-between
+                flex
+                items-center
+                justify-between
 
-              transition-all
-              duration-300
+                transition-all
+                duration-300
 
-              hover:bg-white/45
-            "
-          >
-            <div className="flex items-center gap-3">
-              <div
-                className={`
-                  h-2.5
-                  w-2.5
+                hover:bg-white/45
+              "
+            >
+              <div className="flex items-center gap-3 min-w-0">
+                <div
+                  className={`
+                    h-2.5
+                    w-2.5
 
-                  rounded-full
+                    rounded-full
 
-                  ${
-                    alert.danger
-                      ? "bg-[#d95c5c]"
-                      : "bg-[#e0b04f]"
-                  }
-                `}
-              />
+                    shrink-0
 
-              <span className="capitalize font-medium">
-                {alert.title}
-              </span>
-            </div>
+                    ${
+                      alert.danger
+                        ? "bg-[#d95c5c]"
+                        : "bg-[#e0b04f]"
+                    }
+                  `}
+                />
 
-            <div className="flex items-center gap-3">
-              <span
-                className={`
-                  text-xs
-                  font-semibold
+                <span className="capitalize font-medium truncate">
+                  {alert.title}
+                </span>
+              </div>
 
-                  ${
-                    alert.danger
-                      ? "text-[#c94b4b]"
-                      : "text-black/40"
-                  }
-                `}
-              >
-                {alert.time}
-              </span>
+              <div className="flex items-center gap-3 shrink-0">
+                <span
+                  className={`
+                    text-xs
+                    font-semibold
 
-              <ChevronRight
-                size={15}
-                className="text-black/25"
-              />
-            </div>
-          </button>
-        ))}
+                    ${
+                      alert.danger
+                        ? "text-[#c94b4b]"
+                        : "text-black/40"
+                    }
+                  `}
+                >
+                  {alert.time}
+                </span>
+
+                <ChevronRight
+                  size={15}
+                  className="text-black/25"
+                />
+              </div>
+            </button>
+          ))}
+        </div>
       </div>
     </GlassCard>
   );

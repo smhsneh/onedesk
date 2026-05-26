@@ -1,7 +1,6 @@
 import GlassCard from "../../components/common/GlassCard";
 
 import {
-  TrendingUp,
   Plus,
   Minus,
 } from "lucide-react";
@@ -11,6 +10,9 @@ const semesters = [
   8.6,
   8.8,
   8.7,
+  8.9,
+  9.1,
+  8.5,
 ];
 
 const scales = [
@@ -32,11 +34,31 @@ const CGPAWidget = () => {
       via-[#ffe5b4]
       to-[#fff7e8]
       "
-      className="col-span-12 row-span-2"
+      className="
+        col-span-12
+        row-span-2
+      "
     >
-      <div className="flex justify-between gap-10">
+      <div
+        className="
+          flex
+          gap-10
+
+          h-full
+          min-h-0
+        "
+      >
         {/* left side */}
-        <div className="min-w-[220px]">
+        <div
+          className="
+            min-w-[220px]
+
+            flex
+            flex-col
+
+            shrink-0
+          "
+        >
           <p
             className="
               text-[13px]
@@ -85,24 +107,28 @@ const CGPAWidget = () => {
               font-semibold
 
               text-[#c94b4b]
+
+              w-fit
             "
           >
             ▼ -0.1 from last sem
           </div>
 
           {/* scale */}
-          <div className="flex items-center gap-3 mt-6">
+          <div className="mt-6">
             <p
               className="
                 text-sm
                 font-semibold
                 text-black/60
+
+                mb-3
               "
             >
               Scale:
             </p>
 
-            <div className="flex gap-2">
+            <div className="flex gap-2 flex-wrap">
               {scales.map((scale, index) => (
                 <button
                   key={scale}
@@ -157,7 +183,7 @@ const CGPAWidget = () => {
               trend
             </p>
 
-            <div className="flex gap-1.5">
+            <div className="flex gap-1.5 flex-wrap">
               {semesters.map((sem, index) => (
                 <div
                   key={index}
@@ -182,7 +208,17 @@ const CGPAWidget = () => {
         </div>
 
         {/* right side */}
-        <div className="flex-1">
+        <div
+          className="
+            flex-1
+            min-w-0
+
+            flex
+            flex-col
+
+            min-h-0
+          "
+        >
           <p
             className="
               text-sm
@@ -190,98 +226,115 @@ const CGPAWidget = () => {
               text-black/60
 
               mb-5
+
+              shrink-0
             "
           >
             Enter GPA per semester
           </p>
 
-          <div className="space-y-4">
-            {semesters.map((sem, index) => (
-              <div
-                key={index}
-                className="flex items-center gap-4"
-              >
+          {/* scroll section */}
+          <div
+            className="
+              flex-1
+              min-h-0
+
+              overflow-y-auto
+
+              pr-2
+              pb-2
+            "
+          >
+            <div className="space-y-4">
+              {semesters.map((sem, index) => (
                 <div
-                  className="
-                    min-w-[42px]
-
-                    text-sm
-                    font-bold
-                    text-black/70
-                  "
-                >
-                  Sem {index + 1}
-                </div>
-
-                {/* bar */}
-                <div
-                  className="
-                    flex-1
-
-                    h-10
-
-                    rounded-2xl
-
-                    bg-white/35
-
-                    overflow-hidden
-                  "
+                  key={index}
+                  className="flex items-center gap-4"
                 >
                   <div
                     className="
-                      h-full
-
-                      rounded-1xl
-
-                      bg-[#FAF9F6]
-
-                      flex
-                      items-center
-
-                      px-4
+                      min-w-[42px]
 
                       text-sm
                       font-bold
-                      text-black
+                      text-black/70
 
-                      transition-all
-                      duration-500
+                      shrink-0
                     "
-                    style={{
-                      width: `${(sem / 10) * 100}%`,
-                    }}
+                  >
+                    Sem {index + 1}
+                  </div>
+
+                  {/* bar */}
+                  <div
+                    className="
+                      flex-1
+
+                      h-10
+
+                      rounded-2xl
+
+                      bg-white/35
+
+                      overflow-hidden
+                    "
+                  >
+                    <div
+                      className="
+                        h-full
+
+                        bg-[#FAF9F6]
+
+                        flex
+                        items-center
+
+                        px-4
+
+                        text-sm
+                        font-bold
+                        text-black
+
+                        transition-all
+                        duration-500
+                      "
+                      style={{
+                        width: `${(sem / 10) * 100}%`,
+                      }}
+                    >
+                      {sem}
+                    </div>
+                  </div>
+
+                  <div
+                    className="
+                      w-[62px]
+                      h-10
+
+                      rounded-xl
+
+                      bg-white/45
+
+                      border border-white/30
+
+                      flex
+                      items-center
+                      justify-center
+
+                      text-lg
+                      font-bold
+
+                      shrink-0
+                    "
                   >
                     {sem}
                   </div>
                 </div>
-
-                <div
-                  className="
-                    w-[62px]
-                    h-10
-
-                    rounded-xl
-
-                    bg-white/45
-
-                    border border-white/30
-
-                    flex
-                    items-center
-                    justify-center
-
-                    text-lg
-                    font-bold
-                  "
-                >
-                  {sem}
-                </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
 
           {/* controls */}
-          <div className="flex gap-3 mt-6">
+          <div className="flex gap-3 mt-6 shrink-0">
             <button
               className="
                 h-12

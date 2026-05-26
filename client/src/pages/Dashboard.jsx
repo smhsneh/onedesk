@@ -15,7 +15,7 @@ function Dashboard() {
       className="
         min-h-screen
         pb-20
-        bg-[#f7f6f4]
+
         relative
         overflow-hidden
       "
@@ -23,54 +23,109 @@ function Dashboard() {
         fontFamily: "Manrope, sans-serif",
       }}
     >
-      {/* atmospheric background */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div
-          className="
-            absolute
-            w-[500px]
-            h-[500px]
-            bg-[#ff99c8]/18
-            blur-[120px]
-            rounded-full
-            top-[0%]
-            left-[-5%]
-          "
-        />
-
-        <div
-          className="
-            absolute
-            w-[600px]
-            h-[600px]
-            bg-[#a9def9]/18
-            blur-[140px]
-            rounded-full
-            bottom-[-10%]
-            right-[-5%]
-          "
-        />
-
-        <div
-          className="
-            absolute
-            w-[420px]
-            h-[420px]
-            bg-[#e4c1f9]/14
-            blur-[110px]
-            rounded-full
-            top-[35%]
-            right-[25%]
-          "
-        />
-      </div>
-
-      {/* subtle grain */}
+      {/* background image */}
       <div
         className="
           absolute
           inset-0
+
+          scale-[1.03]
+
+          blur-[10px]
+
+          opacity-[0.92]
+
+          pointer-events-none
+        "
+        style={{
+          backgroundImage: 'url("/images/bg2.jpg")',
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          backgroundRepeat: "no-repeat",
+          transform: "scale(1.06)",
+          willChange: "transform",
+        }}
+      />
+
+      {/* subtle cinematic overlay */}
+      <div
+        className="
+          absolute
+          inset-0
+
+          bg-white/[0.08]
+
+          pointer-events-none
+        "
+      />
+
+      {/* soft atmospheric glows */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div
+          className="
+            absolute
+
+            top-[-10%]
+            left-[-8%]
+
+            w-[520px]
+            h-[520px]
+
+            rounded-full
+
+            bg-[#ff99c8]/12
+
+            blur-[120px]
+          "
+        />
+
+        <div
+          className="
+            absolute
+
+            bottom-[-15%]
+            right-[-10%]
+
+            w-[620px]
+            h-[620px]
+
+            rounded-full
+
+            bg-[#a9def9]/12
+
+            blur-[140px]
+          "
+        />
+
+        <div
+          className="
+            absolute
+
+            top-[35%]
+            right-[22%]
+
+            w-[420px]
+            h-[420px]
+
+            rounded-full
+
+            bg-[#e4c1f9]/10
+
+            blur-[110px]
+          "
+        />
+      </div>
+
+      {/* grain */}
+      <div
+        className="
+          absolute
+          inset-0
+
           opacity-[0.025]
+
+          mix-blend-soft-light
+
           pointer-events-none
         "
         style={{
@@ -81,9 +136,21 @@ function Dashboard() {
 
       <div className="relative z-10">
         {/* header */}
-        <DashboardHeader />
+        <div
+          className="
+            sticky
+            top-0
+            z-50
 
-        {/* workspace container */}
+            backdrop-blur-3xl
+
+            bg-white/42
+          "
+        >
+          <DashboardHeader />
+        </div>
+
+        {/* workspace */}
         <div className="px-5 md:px-7 mt-6">
           <div
             className="
@@ -91,21 +158,21 @@ function Dashboard() {
 
               rounded-[42px]
 
-              bg-white/30
+              bg-white/28
 
-              backdrop-blur-2xl
+              backdrop-blur-[30px]
 
               border border-white/35
 
-              shadow-[0_10px_50px_rgba(0,0,0,0.05)]
+              shadow-[0_25px_80px_rgba(0,0,0,0.10)]
 
               p-5
               md:p-6
 
-              overflow-hidden
+              overflow-visible
             "
           >
-            {/* glow layers */}
+            {/* internal glow */}
             <div className="absolute inset-0 pointer-events-none">
               <div
                 className="
@@ -119,9 +186,7 @@ function Dashboard() {
 
                   rounded-full
 
-                  bg-white
-
-                  opacity-[0.22]
+                  bg-white/30
 
                   blur-[100px]
                 "
@@ -139,9 +204,7 @@ function Dashboard() {
 
                   rounded-full
 
-                  bg-[#ffe5ec]
-
-                  opacity-[0.18]
+                  bg-[#ffe5ec]/30
 
                   blur-[100px]
                 "
@@ -159,16 +222,34 @@ function Dashboard() {
 
                   rounded-full
 
-                  bg-[#d6e4ff]
-
-                  opacity-[0.15]
+                  bg-[#d6e4ff]/25
 
                   blur-[90px]
                 "
               />
             </div>
 
-            {/* actual dashboard */}
+            {/* ultra subtle card grain */}
+            <div
+              className="
+                absolute
+                inset-0
+
+                opacity-[0.018]
+
+                rounded-[42px]
+
+                mix-blend-overlay
+
+                pointer-events-none
+              "
+              style={{
+                backgroundImage:
+                  'url("https://grainy-gradients.vercel.app/noise.svg")',
+              }}
+            />
+
+            {/* dashboard */}
             <div className="relative z-10">
               <BentoGrid>
                 <OverviewWidget />

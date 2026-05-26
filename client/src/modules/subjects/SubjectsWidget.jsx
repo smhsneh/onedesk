@@ -1,4 +1,5 @@
 import GlassCard from "../../components/common/GlassCard";
+
 import {
   BookOpen,
   Plus,
@@ -22,6 +23,26 @@ const subjects = [
     name: "dsp",
     credits: 3,
   },
+  {
+    name: "ai",
+    credits: 4,
+  },
+  {
+    name: "ml",
+    credits: 3,
+  },
+  {
+    name: "java",
+    credits: 3,
+  },
+  {
+    name: "react",
+    credits: 2,
+  },
+  {
+    name: "cloud",
+    credits: 4,
+  },
 ];
 
 const SubjectsWidget = () => {
@@ -32,9 +53,13 @@ const SubjectsWidget = () => {
       via-[#ffe5b4]
       to-[#fff7e8]
       "
-      className="col-span-3 row-span-2"
+      className="
+        col-span-3
+        row-span-2
+      "
     >
-      <div className="flex items-center justify-between mb-6">
+      {/* header */}
+      <div className="flex items-center justify-between mb-6 shrink-0">
         <div>
           <p
             className="
@@ -81,88 +106,92 @@ const SubjectsWidget = () => {
         </button>
       </div>
 
-      {/* subjects */}
+      {/* scroll section */}
       <div
         className="
-          space-y-3
-
-          max-h-[190px]
+          flex-1
+          min-h-0
 
           overflow-y-auto
 
           pr-1
-
-          smooth-scroll
+          pb-2
         "
+        style={{
+          scrollbarGutter: "stable",
+        }}
       >
-        {subjects.map((subject) => (
-          <button
-            key={subject.name}
-            className="
-              w-full
+        <div className="space-y-3">
+          {subjects.map((subject) => (
+            <button
+              key={subject.name}
+              className="
+                w-full
 
-              rounded-2xl
-              bg-white/35
+                rounded-2xl
+                bg-white/35
 
-              border border-white/30
+                border border-white/30
 
-              px-4
-              py-3
+                px-4
+                py-3
 
-              text-left
+                text-left
 
-              flex
-              items-center
-              justify-between
+                flex
+                items-center
+                justify-between
 
-              transition-all
-              duration-300
+                transition-all
+                duration-300
 
-              hover:bg-white/45
-            "
-          >
-            <h3 className="capitalize font-semibold">
-              {subject.name}
-            </h3>
+                hover:bg-white/45
+              "
+            >
+              <h3 className="capitalize font-semibold truncate">
+                {subject.name}
+              </h3>
 
-            <div className="flex items-center gap-2">
-              <span
-                className="
-                  text-xs
-                  font-semibold
+              <div className="flex items-center gap-2 shrink-0">
+                <span
+                  className="
+                    text-xs
+                    font-semibold
 
-                  px-2
-                  py-1
+                    px-2
+                    py-1
 
-                  rounded-full
+                    rounded-full
 
-                  bg-white/45
+                    bg-white/45
 
-                  text-black/55
-                "
-              >
-                {subject.credits}cr
-              </span>
+                    text-black/55
+                  "
+                >
+                  {subject.credits}cr
+                </span>
 
-              <X
-                size={15}
-                className="
-                  text-black/25
+                <X
+                  size={15}
+                  className="
+                    text-black/25
 
-                  hover:text-black/50
+                    hover:text-black/50
 
-                  transition-all
-                "
-              />
-            </div>
-          </button>
-        ))}
+                    transition-all
+                  "
+                />
+              </div>
+            </button>
+          ))}
+        </div>
       </div>
 
       {/* add subject */}
       <div
         className="
           mt-4
+          shrink-0
 
           rounded-2xl
 
@@ -183,6 +212,7 @@ const SubjectsWidget = () => {
           placeholder="Subject name"
           className="
             flex-1
+            min-w-0
 
             h-11
 
@@ -230,6 +260,8 @@ const SubjectsWidget = () => {
           className="
             h-11
             w-11
+
+            shrink-0
 
             rounded-xl
 

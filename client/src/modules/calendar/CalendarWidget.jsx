@@ -1,4 +1,5 @@
 import GlassCard from "../../components/common/GlassCard";
+
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
 
@@ -20,9 +21,13 @@ const CalendarWidget = () => {
       via-[#ead7ff]
       to-[#f5f0ff]
       "
-      className="col-span-4 row-span-3"
+      className="
+        col-span-4
+        row-span-3
+      "
     >
-      <div className="flex items-start justify-between mb-5">
+      {/* header */}
+      <div className="flex items-start justify-between mb-5 shrink-0">
         <div>
           <p
             className="
@@ -69,69 +74,79 @@ const CalendarWidget = () => {
         </button>
       </div>
 
-      <div className="calendar-wrapper">
-        <Calendar
-          onChange={setDate}
-          value={date}
-          prevLabel={
-            <div
-              className="
-                h-8
-                w-8
+      {/* calendar */}
+      <div
+        className="
+          flex-1
+          min-h-0
 
-                rounded-xl
+          overflow-hidden
+        "
+      >
+        <div className="calendar-wrapper h-full">
+          <Calendar
+            onChange={setDate}
+            value={date}
+            prevLabel={
+              <div
+                className="
+                  h-8
+                  w-8
 
-                bg-white/35
+                  rounded-xl
 
-                border border-white/30
+                  bg-white/35
 
-                flex
-                items-center
-                justify-center
+                  border border-white/30
 
-                transition-all
-                duration-300
+                  flex
+                  items-center
+                  justify-center
 
-                hover:bg-white/50
-              "
-            >
-              <ChevronLeft size={16} />
-            </div>
-          }
-          nextLabel={
-            <div
-              className="
-                h-8
-                w-8
+                  transition-all
+                  duration-300
 
-                rounded-xl
+                  hover:bg-white/50
+                "
+              >
+                <ChevronLeft size={16} />
+              </div>
+            }
+            nextLabel={
+              <div
+                className="
+                  h-8
+                  w-8
 
-                bg-white/35
+                  rounded-xl
 
-                border border-white/30
+                  bg-white/35
 
-                flex
-                items-center
-                justify-center
+                  border border-white/30
 
-                transition-all
-                duration-300
+                  flex
+                  items-center
+                  justify-center
 
-                hover:bg-white/50
-              "
-            >
-              <ChevronRight size={16} />
-            </div>
-          }
-          next2Label={null}
-          prev2Label={null}
-          showNeighboringMonth={true}
-          formatShortWeekday={(locale, date) =>
-            ["s", "m", "t", "w", "t", "f", "s"][
-              date.getDay()
-            ]
-          }
-        />
+                  transition-all
+                  duration-300
+
+                  hover:bg-white/50
+                "
+              >
+                <ChevronRight size={16} />
+              </div>
+            }
+            next2Label={null}
+            prev2Label={null}
+            showNeighboringMonth={true}
+            formatShortWeekday={(locale, date) =>
+              ["s", "m", "t", "w", "t", "f", "s"][
+                date.getDay()
+              ]
+            }
+          />
+        </div>
       </div>
     </GlassCard>
   );

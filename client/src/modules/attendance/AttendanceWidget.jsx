@@ -25,6 +25,26 @@ const attendance = [
     attended: 88,
     total: 100,
   },
+  {
+    subject: "ai",
+    attended: 82,
+    total: 100,
+  },
+  {
+    subject: "ml",
+    attended: 73,
+    total: 100,
+  },
+  {
+    subject: "java",
+    attended: 94,
+    total: 100,
+  },
+  {
+    subject: "react",
+    attended: 69,
+    total: 100,
+  },
 ];
 
 const AttendanceWidget = () => {
@@ -64,10 +84,13 @@ const AttendanceWidget = () => {
       via-[#c7f9cc]
       to-[#edfdf0]
       "
-      className="col-span-5 row-span-2"
+      className="
+        col-span-5
+        row-span-2
+      "
     >
       {/* header */}
-      <div className="flex items-center justify-between mb-5">
+      <div className="flex items-center justify-between mb-5 shrink-0">
         <div>
           <p
             className="
@@ -146,160 +169,170 @@ const AttendanceWidget = () => {
         </button>
       </div>
 
-      {/* attendance grid */}
+      {/* scroll section */}
       <div
         className="
-          grid
-          grid-cols-2
-
-          gap-4
-
-          max-h-[235px]
+          flex-1
+          min-h-0
 
           overflow-y-auto
 
           pr-1
           pb-2
         "
+        style={{
+          scrollbarGutter: "stable",
+        }}
       >
-        {attendance.map((item) => {
-          const percentage =
-            calculatePercentage(
-              item.attended,
-              item.total
-            );
+        <div
+          className="
+            grid
+            grid-cols-2
 
-          return (
-            <div
-              key={item.subject}
-              className="
-                min-w-0
+            gap-4
+          "
+        >
+          {attendance.map((item) => {
+            const percentage =
+              calculatePercentage(
+                item.attended,
+                item.total
+              );
 
-                rounded-2xl
-
-                bg-white/20
-
-                border border-white/25
-
-                p-4
-              "
-            >
-              {/* top */}
-              <div className="flex items-center justify-between mb-3">
-                <span className="capitalize font-semibold text-[18px]">
-                  {item.subject}
-                </span>
-
-                <span
-                  className={`
-                    text-sm
-                    font-bold
-
-                    ${
-                      percentage >= 75
-                        ? "text-[#2f8f46]"
-                        : "text-[#d9485f]"
-                    }
-                  `}
-                >
-                  {percentage}%
-                </span>
-              </div>
-
-              {/* progress */}
+            return (
               <div
+                key={item.subject}
                 className="
-                  w-full
-                  h-[7px]
+                  min-w-0
 
-                  rounded-full
+                  rounded-2xl
 
-                  bg-white/40
+                  bg-white/20
 
-                  overflow-hidden
+                  border border-white/25
 
-                  mb-4
+                  p-4
                 "
               >
+                {/* top */}
+                <div className="flex items-center justify-between mb-3 gap-3">
+                  <span className="capitalize font-semibold text-[18px] truncate">
+                    {item.subject}
+                  </span>
+
+                  <span
+                    className={`
+                      text-sm
+                      font-bold
+
+                      shrink-0
+
+                      ${
+                        percentage >= 75
+                          ? "text-[#2f8f46]"
+                          : "text-[#d9485f]"
+                      }
+                    `}
+                  >
+                    {percentage}%
+                  </span>
+                </div>
+
+                {/* progress */}
                 <div
-                  className={`
-                    h-full
+                  className="
+                    w-full
+                    h-[7px]
+
                     rounded-full
 
-                    transition-all
-                    duration-500
+                    bg-white/40
 
-                    ${getBarColor(
-                      percentage
-                    )}
-                  `}
-                  style={{
-                    width: `${percentage}%`,
-                  }}
-                />
-              </div>
+                    overflow-hidden
 
-              {/* inputs */}
-              <div className="flex items-center gap-2 w-full">
-                <input
-                  type="number"
-                  defaultValue={item.attended}
-                  className="
-                    min-w-0
-                    flex-1
-
-                    h-10
-
-                    rounded-xl
-
-                    bg-white/45
-
-                    border border-white/30
-
-                    px-3
-
-                    text-sm
-                    font-semibold
-
-                    outline-none
-
-                    focus:bg-white/60
+                    mb-4
                   "
-                />
+                >
+                  <div
+                    className={`
+                      h-full
+                      rounded-full
 
-                <span className="text-black/35 text-sm shrink-0">
-                  /
-                </span>
+                      transition-all
+                      duration-500
 
-                <input
-                  type="number"
-                  defaultValue={item.total}
-                  className="
-                    min-w-0
-                    flex-1
+                      ${getBarColor(
+                        percentage
+                      )}
+                    `}
+                    style={{
+                      width: `${percentage}%`,
+                    }}
+                  />
+                </div>
 
-                    h-10
+                {/* inputs */}
+                <div className="flex items-center gap-2 w-full">
+                  <input
+                    type="number"
+                    defaultValue={item.attended}
+                    className="
+                      min-w-0
+                      flex-1
 
-                    rounded-xl
+                      h-10
 
-                    bg-white/45
+                      rounded-xl
 
-                    border border-white/30
+                      bg-white/45
 
-                    px-3
+                      border border-white/30
 
-                    text-sm
-                    font-semibold
+                      px-3
 
-                    outline-none
+                      text-sm
+                      font-semibold
 
-                    focus:bg-white/60
-                  "
-                />
+                      outline-none
+
+                      focus:bg-white/60
+                    "
+                  />
+
+                  <span className="text-black/35 text-sm shrink-0">
+                    /
+                  </span>
+
+                  <input
+                    type="number"
+                    defaultValue={item.total}
+                    className="
+                      min-w-0
+                      flex-1
+
+                      h-10
+
+                      rounded-xl
+
+                      bg-white/45
+
+                      border border-white/30
+
+                      px-3
+
+                      text-sm
+                      font-semibold
+
+                      outline-none
+
+                      focus:bg-white/60
+                    "
+                  />
+                </div>
               </div>
-            </div>
-          );
-        })}
+            );
+          })}
+        </div>
       </div>
     </GlassCard>
   );
