@@ -9,7 +9,23 @@ import CGPAWidget from "../modules/cgpa/CGPAWidget";
 import SubjectsWidget from "../modules/subjects/SubjectsWidget";
 import ExamWidget from "../modules/exams/ExamWidget";
 
+import { dashboardConfig } from "../utils/dashboardConfig";
+
+const widgetMap = {
+  overview: OverviewWidget,
+  attendance: AttendanceWidget,
+  subjects: SubjectsWidget,
+  calendar: CalendarWidget,
+  assignments: AssignmentWidget,
+  exams: ExamWidget,
+  cgpa: CGPAWidget,
+};
+
 function Dashboard() {
+  const mode = "college";
+
+  const widgets = dashboardConfig[mode];
+
   return (
     <div
       className="
@@ -252,19 +268,13 @@ function Dashboard() {
             {/* dashboard */}
             <div className="relative z-10">
               <BentoGrid>
-                <OverviewWidget />
+                {widgets.map((widget) => {
+                  const WidgetComponent = widgetMap[widget];
 
-                <AttendanceWidget />
-
-                <SubjectsWidget />
-
-                <CalendarWidget />
-
-                <AssignmentWidget />
-
-                <ExamWidget />
-
-                <CGPAWidget />
+                  return (
+                    <WidgetComponent key={widget} />
+                  );
+                })}
               </BentoGrid>
             </div>
           </div>

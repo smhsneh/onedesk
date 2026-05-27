@@ -1,26 +1,146 @@
+import {
+  Minus,
+  Plus,
+} from "lucide-react";
+
+import { calculateAttendance } from "../../utils/attendanceCalc";
+
 const AttendanceRow = ({
+  id,
   subject,
-  value,
+  attended,
+  total,
+  onUpdate,
 }) => {
+  const percentage =
+    calculateAttendance(
+      attended,
+      total
+    );
+
+  const isDanger =
+    percentage < 75;
+
   return (
     <div>
       <div className="flex justify-between mb-2">
-        <span className="capitalize font-medium">
-          {subject}
-        </span>
+        <div>
+          <span className="capitalize font-medium">
+            {subject}
+          </span>
 
-        <span className="text-sm">
-          {value}%
+          <p className="text-xs text-black/40">
+            {attended}/{total} classes
+          </p>
+        </div>
+
+        <span
+          className={`
+            text-sm
+            font-semibold
+
+            ${
+              isDanger
+                ? "text-[#d95c5c]"
+                : "text-[#2f7a35]"
+            }
+          `}
+        >
+          {percentage}%
         </span>
       </div>
 
       <div className="w-full h-3 rounded-full bg-white/40 overflow-hidden">
         <div
-          className="h-full rounded-full bg-black/70"
+          className={`
+            h-full
+            rounded-full
+            transition-all
+            duration-300
+
+            ${
+              isDanger
+                ? "bg-[#d95c5c]"
+                : "bg-[#2f7a35]"
+            }
+          `}
           style={{
-            width: `${value}%`,
+            width: `${percentage}%`,
           }}
         />
+      </div>
+
+      <div className="flex gap-2 mt-2">
+        <button
+          onClick={() =>
+            onUpdate(id, {
+              total: total + 1,
+            })
+          }
+          className="
+            h-6
+
+            px-2
+
+            rounded-lg
+
+            bg-white/30
+
+            border border-white/30
+
+            flex
+            items-center
+            gap-1
+
+            text-[10px]
+            font-medium
+
+            transition-all
+            duration-300
+
+            hover:bg-white/45
+          "
+        >
+          <Minus size={10} />
+          missed
+        </button>
+
+        <button
+          onClick={() =>
+            onUpdate(id, {
+              attended:
+                attended + 1,
+
+              total: total + 1,
+            })
+          }
+          className="
+            h-6
+
+            px-2
+
+            rounded-lg
+
+            bg-white/30
+
+            border border-white/30
+
+            flex
+            items-center
+            gap-1
+
+            text-[10px]
+            font-medium
+
+            transition-all
+            duration-300
+
+            hover:bg-white/45
+          "
+        >
+          <Plus size={10} />
+          attended
+        </button>
       </div>
     </div>
   );

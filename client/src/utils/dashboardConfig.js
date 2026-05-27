@@ -5,6 +5,15 @@ export const dashboardConfig = {
     "subjects",
     "calendar",
     "assignments",
+    "exams",
     "cgpa",
+  ],
+
+  placement: [
+    "overview",
+    "dsa",
+    "applications",
+    "oa",
+    "interviews",
   ],
 };

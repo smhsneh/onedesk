@@ -1,340 +1,419 @@
+import { useState } from "react";
+
 import GlassCard from "../../components/common/GlassCard";
 
+import AttendanceRow from "./AttendanceRow";
+
 import {
-  BarChart3,
+  AlertTriangle,
+  Plus,
+  X,
 } from "lucide-react";
 
-const attendance = [
-  {
-    subject: "dbms",
-    attended: 78,
-    total: 100,
-  },
-  {
-    subject: "os",
-    attended: 91,
-    total: 100,
-  },
-  {
-    subject: "cn",
-    attended: 65,
-    total: 100,
-  },
-  {
-    subject: "dsp",
-    attended: 88,
-    total: 100,
-  },
-  {
-    subject: "ai",
-    attended: 82,
-    total: 100,
-  },
-  {
-    subject: "ml",
-    attended: 73,
-    total: 100,
-  },
-  {
-    subject: "java",
-    attended: 94,
-    total: 100,
-  },
-  {
-    subject: "react",
-    attended: 69,
-    total: 100,
-  },
-];
+import { useDashboard } from "../../context/DashboardContext";
+
+import { calculateAttendance } from "../../utils/attendanceCalc";
 
 const AttendanceWidget = () => {
-  const calculatePercentage = (
-    attended,
-    total
-  ) => {
-    return Math.round(
-      (attended / total) * 100
-    );
-  };
+  const {
+    dashboardData,
+    updateAttendance,
+    addAttendanceSubject,
+  } = useDashboard();
 
-  const getBarColor = (percentage) => {
-    if (percentage >= 75) {
-      return "bg-[#3ea66b]";
-    }
+  const attendance =
+    dashboardData.attendance;
 
-    return "bg-[#d95c5c]";
-  };
+  const [open, setOpen] =
+    useState(false);
 
-  const average = Math.round(
-    attendance.reduce((acc, item) => {
-      return (
-        acc +
-        calculatePercentage(
+  const [subject, setSubject] =
+    useState("");
+
+  const [attended, setAttended] =
+    useState("");
+
+  const [total, setTotal] =
+    useState("");
+
+  const dangerCount =
+    attendance.filter((item) => {
+      const percentage =
+        calculateAttendance(
           item.attended,
           item.total
-        )
-      );
-    }, 0) / attendance.length
-  );
+        );
+
+      return percentage < 75;
+    }).length;
+
+  const handleAddSubject = () => {
+    if (!subject.trim()) return;
+
+    const attendedNumber =
+      Number(attended);
+
+    const totalNumber =
+      Number(total);
+
+    if (
+      Number.isNaN(attendedNumber) ||
+      Number.isNaN(totalNumber)
+    ) {
+      return;
+    }
+
+    addAttendanceSubject({
+      id: Date.now(),
+      subject,
+      attended: attendedNumber,
+      total: totalNumber,
+    });
+
+    setSubject("");
+    setAttended("");
+    setTotal("");
+
+    setOpen(false);
+  };
 
   return (
-    <GlassCard
-      gradient="
-      from-[#d8f3dc]
-      via-[#c7f9cc]
-      to-[#edfdf0]
-      "
-      className="
-        col-span-5
-        row-span-2
-      "
-    >
-      {/* header */}
-      <div className="flex items-center justify-between mb-5 shrink-0">
-        <div>
-          <p
+    <>
+      <GlassCard
+        gradient="
+        from-[#d8f5d0]
+        via-[#e6f9df]
+        to-[#f3fff0]
+        "
+        className="
+          col-span-5
+          row-span-2
+        "
+      >
+        {/* header */}
+        <div className="flex items-start justify-between mb-6 shrink-0">
+          <div>
+            <p
+              className="
+                text-[13px]
+                uppercase
+                tracking-[0.28em]
+                text-black/45
+                mb-3
+                font-semibold
+              "
+            >
+              attendance
+            </p>
+
+            <div className="flex items-end gap-3">
+              <h2
+                className="
+                  text-5xl
+                  font-black
+                  tracking-[-0.04em]
+                  leading-none
+                "
+              >
+                {dangerCount}
+              </h2>
+
+              <span
+                className="
+                  mb-2
+
+                  px-3
+                  py-1
+
+                  rounded-full
+
+                  bg-white/40
+
+                  text-xs
+                  font-semibold
+                  text-black/50
+                "
+              >
+                below 75%
+              </span>
+            </div>
+          </div>
+
+          <button
+            onClick={() =>
+              setOpen(true)
+            }
             className="
-              text-[13px]
-              uppercase
-              tracking-[0.28em]
-              text-black/45
-              mb-3
-              font-semibold
+              h-10
+              w-10
+
+              rounded-2xl
+
+              bg-white/25
+
+              border border-white/30
+
+              flex
+              items-center
+              justify-center
+
+              transition-all
+              duration-300
+
+              hover:bg-white/40
+              hover:scale-105
             "
           >
-            attendance
-          </p>
-
-          <div className="flex items-end gap-3">
-            <h2
-              className="
-                text-6xl
-                font-black
-                tracking-[-0.04em]
-                leading-none
-              "
-            >
-              {average}%
-            </h2>
-
-            <span
-              className="
-                mb-2
-
-                px-3
-                py-1
-
-                rounded-full
-
-                bg-white/45
-
-                text-xs
-                font-semibold
-                text-black/50
-              "
-            >
-              avg
-            </span>
-          </div>
+            <Plus
+              size={18}
+              className="text-black/40"
+            />
+          </button>
         </div>
 
-        <button
+        {/* body */}
+        <div
           className="
-            h-10
-            w-10
+            flex-1
+            min-h-0
 
-            rounded-2xl
+            overflow-y-auto
 
-            bg-white/25
+            pr-1
+            pb-2
+          "
+          style={{
+            scrollbarGutter: "stable",
+          }}
+        >
+          <div className="space-y-4">
+            {attendance.map((item) => (
+              <AttendanceRow
+                key={item.id}
+                id={item.id}
+                subject={item.subject}
+                attended={
+                  item.attended
+                }
+                total={item.total}
+                onUpdate={
+                  updateAttendance
+                }
+              />
+            ))}
+          </div>
+        </div>
+      </GlassCard>
 
-            border border-white/30
+      {/* modal */}
+      {open && (
+        <div
+          className="
+            fixed
+            inset-0
+            z-[100]
 
             flex
             items-center
             justify-center
 
-            transition-all
-            duration-300
+            bg-black/20
+            backdrop-blur-md
 
-            hover:bg-white/40
-            hover:scale-105
-
-            active:scale-95
+            p-5
           "
         >
-          <BarChart3
-            size={18}
-            className="text-black/40"
-          />
-        </button>
-      </div>
+          <div
+            className="
+              w-full
+              max-w-md
 
-      {/* scroll section */}
-      <div
-        className="
-          flex-1
-          min-h-0
+              rounded-[32px]
 
-          overflow-y-auto
+              bg-white/70
 
-          pr-1
-          pb-2
-        "
-        style={{
-          scrollbarGutter: "stable",
-        }}
-      >
-        <div
-          className="
-            grid
-            grid-cols-2
+              border border-white/40
 
-            gap-4
-          "
-        >
-          {attendance.map((item) => {
-            const percentage =
-              calculatePercentage(
-                item.attended,
-                item.total
-              );
+              backdrop-blur-3xl
 
-            return (
-              <div
-                key={item.subject}
+              shadow-[0_20px_60px_rgba(0,0,0,0.15)]
+
+              p-6
+            "
+          >
+            {/* top */}
+            <div className="flex items-center justify-between mb-6">
+              <div>
+                <p
+                  className="
+                    text-[12px]
+                    uppercase
+                    tracking-[0.28em]
+                    text-black/40
+                    mb-2
+                    font-semibold
+                  "
+                >
+                  create
+                </p>
+
+                <h2
+                  className="
+                    text-2xl
+                    font-black
+                    tracking-[-0.04em]
+                  "
+                >
+                  attendance subject
+                </h2>
+              </div>
+
+              <button
+                onClick={() =>
+                  setOpen(false)
+                }
                 className="
-                  min-w-0
+                  h-10
+                  w-10
 
                   rounded-2xl
 
-                  bg-white/20
+                  bg-white/40
 
-                  border border-white/25
+                  border border-white/30
 
-                  p-4
+                  flex
+                  items-center
+                  justify-center
+
+                  hover:bg-white/60
+
+                  transition-all
                 "
               >
-                {/* top */}
-                <div className="flex items-center justify-between mb-3 gap-3">
-                  <span className="capitalize font-semibold text-[18px] truncate">
-                    {item.subject}
-                  </span>
+                <X
+                  size={18}
+                  className="text-black/45"
+                />
+              </button>
+            </div>
 
-                  <span
-                    className={`
-                      text-sm
-                      font-bold
+            {/* inputs */}
+            <div className="space-y-4">
+              <input
+                type="text"
+                placeholder="subject name"
+                value={subject}
+                onChange={(e) =>
+                  setSubject(
+                    e.target.value
+                  )
+                }
+                className="
+                  w-full
 
-                      shrink-0
+                  rounded-2xl
 
-                      ${
-                        percentage >= 75
-                          ? "text-[#2f8f46]"
-                          : "text-[#d9485f]"
-                      }
-                    `}
-                  >
-                    {percentage}%
-                  </span>
-                </div>
+                  bg-white/40
 
-                {/* progress */}
-                <div
-                  className="
-                    w-full
-                    h-[7px]
+                  border border-white/30
 
-                    rounded-full
+                  px-4
+                  py-4
 
-                    bg-white/40
+                  outline-none
 
-                    overflow-hidden
+                  placeholder:text-black/30
+                "
+              />
 
-                    mb-4
-                  "
-                >
-                  <div
-                    className={`
-                      h-full
-                      rounded-full
+              <input
+                type="number"
+                placeholder="classes attended"
+                value={attended}
+                onChange={(e) =>
+                  setAttended(
+                    e.target.value
+                  )
+                }
+                className="
+                  w-full
 
-                      transition-all
-                      duration-500
+                  rounded-2xl
 
-                      ${getBarColor(
-                        percentage
-                      )}
-                    `}
-                    style={{
-                      width: `${percentage}%`,
-                    }}
-                  />
-                </div>
+                  bg-white/40
 
-                {/* inputs */}
-                <div className="flex items-center gap-2 w-full">
-                  <input
-                    type="number"
-                    defaultValue={item.attended}
-                    className="
-                      min-w-0
-                      flex-1
+                  border border-white/30
 
-                      h-10
+                  px-4
+                  py-4
 
-                      rounded-xl
+                  outline-none
 
-                      bg-white/45
+                  placeholder:text-black/30
+                "
+              />
 
-                      border border-white/30
+              <input
+                type="number"
+                placeholder="total classes"
+                value={total}
+                onChange={(e) =>
+                  setTotal(
+                    e.target.value
+                  )
+                }
+                className="
+                  w-full
 
-                      px-3
+                  rounded-2xl
 
-                      text-sm
-                      font-semibold
+                  bg-white/40
 
-                      outline-none
+                  border border-white/30
 
-                      focus:bg-white/60
-                    "
-                  />
+                  px-4
+                  py-4
 
-                  <span className="text-black/35 text-sm shrink-0">
-                    /
-                  </span>
+                  outline-none
 
-                  <input
-                    type="number"
-                    defaultValue={item.total}
-                    className="
-                      min-w-0
-                      flex-1
+                  placeholder:text-black/30
+                "
+              />
+            </div>
 
-                      h-10
+            {/* action */}
+            <button
+              onClick={
+                handleAddSubject
+              }
+              className="
+                mt-6
 
-                      rounded-xl
+                w-full
 
-                      bg-white/45
+                rounded-2xl
 
-                      border border-white/30
+                bg-black
 
-                      px-3
+                text-white
 
-                      text-sm
-                      font-semibold
+                py-4
 
-                      outline-none
+                font-semibold
 
-                      focus:bg-white/60
-                    "
-                  />
-                </div>
-              </div>
-            );
-          })}
+                transition-all
+                duration-300
+
+                hover:scale-[1.02]
+              "
+            >
+              add subject
+            </button>
+          </div>
         </div>
-      </div>
-    </GlassCard>
+      )}
+    </>
   );
 };
 
