@@ -5,7 +5,6 @@ import GlassCard from "../../components/common/GlassCard";
 import AttendanceRow from "./AttendanceRow";
 
 import {
-  AlertTriangle,
   Plus,
   X,
 } from "lucide-react";
@@ -19,6 +18,7 @@ const AttendanceWidget = () => {
     dashboardData,
     updateAttendance,
     addAttendanceSubject,
+    deleteAttendanceSubject,
   } = useDashboard();
 
   const attendance =
@@ -198,6 +198,9 @@ const AttendanceWidget = () => {
                 total={item.total}
                 onUpdate={
                   updateAttendance
+                }
+                onDelete={
+                  deleteAttendanceSubject
                 }
               />
             ))}

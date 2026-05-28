@@ -1,51 +1,46 @@
 import GlassCard from "../../components/common/GlassCard";
 
+import SubjectRow from "./SubjectRow";
+
 import {
   BookOpen,
   Plus,
-  X,
 } from "lucide-react";
 
-const subjects = [
-  {
-    name: "dbms",
-    credits: 4,
-  },
-  {
-    name: "os",
-    credits: 3,
-  },
-  {
-    name: "cn",
-    credits: 4,
-  },
-  {
-    name: "dsp",
-    credits: 3,
-  },
-  {
-    name: "ai",
-    credits: 4,
-  },
-  {
-    name: "ml",
-    credits: 3,
-  },
-  {
-    name: "java",
-    credits: 3,
-  },
-  {
-    name: "react",
-    credits: 2,
-  },
-  {
-    name: "cloud",
-    credits: 4,
-  },
-];
+import { useState } from "react";
+
+import { useDashboard } from "../../context/DashboardContext";
 
 const SubjectsWidget = () => {
+  const {
+    dashboardData,
+    addSubject,
+    deleteSubject,
+  } = useDashboard();
+
+  const subjects =
+    dashboardData.subjects;
+
+  const [name, setName] =
+    useState("");
+
+  const [credits, setCredits] =
+    useState("");
+
+  const handleAddSubject = () => {
+    if (!name.trim()) return;
+
+    addSubject({
+      id: Date.now(),
+      name,
+      credits:
+        Number(credits) || 0,
+    });
+
+    setName("");
+    setCredits("");
+  };
+
   return (
     <GlassCard
       gradient="
@@ -123,66 +118,17 @@ const SubjectsWidget = () => {
       >
         <div className="space-y-3">
           {subjects.map((subject) => (
-            <button
-              key={subject.name}
-              className="
-                w-full
-
-                rounded-2xl
-                bg-white/35
-
-                border border-white/30
-
-                px-4
-                py-3
-
-                text-left
-
-                flex
-                items-center
-                justify-between
-
-                transition-all
-                duration-300
-
-                hover:bg-white/45
-              "
-            >
-              <h3 className="capitalize font-semibold truncate">
-                {subject.name}
-              </h3>
-
-              <div className="flex items-center gap-2 shrink-0">
-                <span
-                  className="
-                    text-xs
-                    font-semibold
-
-                    px-2
-                    py-1
-
-                    rounded-full
-
-                    bg-white/45
-
-                    text-black/55
-                  "
-                >
-                  {subject.credits}cr
-                </span>
-
-                <X
-                  size={15}
-                  className="
-                    text-black/25
-
-                    hover:text-black/50
-
-                    transition-all
-                  "
-                />
-              </div>
-            </button>
+            <SubjectRow
+              key={subject.id}
+              id={subject.id}
+              subject={subject.name}
+              credits={
+                subject.credits
+              }
+              onDelete={
+                deleteSubject
+              }
+            />
           ))}
         </div>
       </div>
@@ -210,6 +156,12 @@ const SubjectsWidget = () => {
         <input
           type="text"
           placeholder="Subject name"
+          value={name}
+          onChange={(e) =>
+            setName(
+              e.target.value
+            )
+          }
           className="
             flex-1
             min-w-0
@@ -236,6 +188,12 @@ const SubjectsWidget = () => {
         <input
           type="number"
           placeholder="cr"
+          value={credits}
+          onChange={(e) =>
+            setCredits(
+              e.target.value
+            )
+          }
           className="
             w-[56px]
 
@@ -257,6 +215,9 @@ const SubjectsWidget = () => {
         />
 
         <button
+          onClick={
+            handleAddSubject
+          }
           className="
             h-11
             w-11

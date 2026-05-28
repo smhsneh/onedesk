@@ -1,6 +1,8 @@
 import {
   Minus,
   Plus,
+  RotateCcw,
+  Trash2,
 } from "lucide-react";
 
 import { calculateAttendance } from "../../utils/attendanceCalc";
@@ -11,6 +13,7 @@ const AttendanceRow = ({
   attended,
   total,
   onUpdate,
+  onDelete,
 }) => {
   const percentage =
     calculateAttendance(
@@ -70,7 +73,7 @@ const AttendanceRow = ({
         />
       </div>
 
-      <div className="flex gap-2 mt-2">
+      <div className="flex gap-2 mt-2 flex-wrap">
         <button
           onClick={() =>
             onUpdate(id, {
@@ -140,6 +143,74 @@ const AttendanceRow = ({
         >
           <Plus size={10} />
           attended
+        </button>
+
+        <button
+          onClick={() =>
+            onUpdate(id, {
+              attended: 0,
+              total: 0,
+            })
+          }
+          className="
+            h-6
+
+            px-2
+
+            rounded-lg
+
+            bg-white/30
+
+            border border-white/30
+
+            flex
+            items-center
+            gap-1
+
+            text-[10px]
+            font-medium
+
+            transition-all
+            duration-300
+
+            hover:bg-white/45
+          "
+        >
+          <RotateCcw size={10} />
+          reset
+        </button>
+
+        <button
+          onClick={() =>
+            onDelete(id)
+          }
+          className="
+            h-6
+
+            px-2
+
+            rounded-lg
+
+            bg-[#ffd6df]
+
+            border border-[#ffd6df]
+
+            flex
+            items-center
+            gap-1
+
+            text-[10px]
+            font-medium
+            text-[#c94b4b]
+
+            transition-all
+            duration-300
+
+            hover:opacity-90
+          "
+        >
+          <Trash2 size={10} />
+          delete
         </button>
       </div>
     </div>

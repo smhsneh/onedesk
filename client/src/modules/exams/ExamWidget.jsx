@@ -198,7 +198,7 @@ const ExamWidget = () => {
       >
         <div className="space-y-3">
           {exams.map((exam) => (
-            <button
+            <div
               key={exam.id}
               className="
                 w-full
@@ -264,13 +264,26 @@ const ExamWidget = () => {
                   </span>
 
                   <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-
+                    onClick={() => {
                       deleteExam(
                         exam.id
                       );
                     }}
+                    className="
+                      h-7
+                      w-7
+
+                      rounded-lg
+
+                      flex
+                      items-center
+                      justify-center
+
+                      transition-all
+                      duration-300
+
+                      hover:bg-white/40
+                    "
                   >
                     <X
                       size={15}
@@ -279,7 +292,7 @@ const ExamWidget = () => {
                   </button>
                 </div>
               </div>
-            </button>
+            </div>
           ))}
         </div>
       </div>

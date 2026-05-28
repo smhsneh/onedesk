@@ -7,8 +7,14 @@ const subjectService = {
     return data;
   },
 
-  updateSubject: async (id, data) => {
-    return data;
+  updateSubject: async (
+    id,
+    data
+  ) => {
+    return {
+      id,
+      ...data,
+    };
   },
 
   deleteSubject: async (id) => {

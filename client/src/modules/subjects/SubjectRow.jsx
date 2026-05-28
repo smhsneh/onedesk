@@ -1,7 +1,13 @@
+import {
+  Pencil,
+  Trash2,
+} from "lucide-react";
+
 const SubjectRow = ({
+  id,
   subject,
-  attendance,
   credits,
+  onDelete,
 }) => {
   return (
     <div
@@ -12,28 +18,57 @@ const SubjectRow = ({
         p-4
       "
     >
-      <div className="flex items-center justify-between mb-2">
-        <h3 className="capitalize font-semibold">
+      <div className="flex items-center justify-between">
+        <h3 className="capitalize font-semibold truncate">
           {subject}
         </h3>
 
-        <span className="text-sm">
-          {attendance}%
-        </span>
-      </div>
+        <div className="flex items-center gap-2 shrink-0">
+          <span
+            className="
+              text-xs
+              font-semibold
 
-      <div className="w-full h-2 rounded-full bg-white/40 overflow-hidden">
-        <div
-          className="h-full rounded-full bg-black/70"
-          style={{
-            width: `${attendance}%`,
-          }}
-        />
-      </div>
+              px-2
+              py-1
 
-      <p className="text-xs text-black/50 mt-2">
-        {credits} credits
-      </p>
+              rounded-full
+
+              bg-white/45
+
+              text-black/55
+            "
+          >
+            {credits}cr
+          </span>
+
+          <button
+            onClick={() =>
+              onDelete(id)
+            }
+            className="
+              h-7
+              w-7
+
+              rounded-lg
+
+              flex
+              items-center
+              justify-center
+
+              transition-all
+              duration-300
+
+              hover:bg-white/40
+            "
+          >
+            <Trash2
+              size={14}
+              className="text-black/35"
+            />
+          </button>
+        </div>
+      </div>
     </div>
   );
 };

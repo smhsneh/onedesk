@@ -5,7 +5,8 @@ import {
   useState,
 } from "react";
 
-const DashboardContext = createContext();
+const DashboardContext =
+  createContext();
 
 const defaultDashboardData = {
   semester: 4,
@@ -89,6 +90,8 @@ const defaultDashboardData = {
       },
     ],
   },
+
+  calendarEvents: [],
 };
 
 export const DashboardProvider = ({
@@ -109,7 +112,9 @@ export const DashboardProvider = ({
   useEffect(() => {
     localStorage.setItem(
       "onedesk-dashboard",
-      JSON.stringify(dashboardData)
+      JSON.stringify(
+        dashboardData
+      )
     );
   }, [dashboardData]);
 
@@ -142,6 +147,20 @@ export const DashboardProvider = ({
                 ...updatedData,
               }
             : item
+        ),
+    }));
+  };
+
+  const deleteAttendanceSubject = (
+    id
+  ) => {
+    setDashboardData((prev) => ({
+      ...prev,
+
+      attendance:
+        prev.attendance.filter(
+          (subject) =>
+            subject.id !== id
         ),
     }));
   };
@@ -211,9 +230,11 @@ export const DashboardProvider = ({
     setDashboardData((prev) => ({
       ...prev,
 
-      exams: prev.exams.filter(
-        (exam) => exam.id !== id
-      ),
+      exams:
+        prev.exams.filter(
+          (exam) =>
+            exam.id !== id
+        ),
     }));
   };
 
@@ -228,6 +249,26 @@ export const DashboardProvider = ({
         ...prev.subjects,
         subject,
       ],
+    }));
+  };
+
+  const updateSubject = (
+    id,
+    updatedData
+  ) => {
+    setDashboardData((prev) => ({
+      ...prev,
+
+      subjects:
+        prev.subjects.map(
+          (subject) =>
+            subject.id === id
+              ? {
+                  ...subject,
+                  ...updatedData,
+                }
+              : subject
+        ),
     }));
   };
 
@@ -267,13 +308,19 @@ export const DashboardProvider = ({
           ) || 0
       );
 
+    const total =
+      values.reduce(
+        (a, b) => a + b,
+        0
+      );
+
     const current =
-      (
-        values.reduce(
-          (a, b) => a + b,
-          0
-        ) / values.length
-      ).toFixed(2);
+      values.length > 0
+        ? (
+            total /
+            values.length
+          ).toFixed(2)
+        : "0.00";
 
     setDashboardData((prev) => ({
       ...prev,
@@ -289,6 +336,40 @@ export const DashboardProvider = ({
     }));
   };
 
+  // calendar
+  const addCalendarEvent = (
+    event
+  ) => {
+    setDashboardData((prev) => ({
+      ...prev,
+
+      calendarEvents: [
+        ...(
+          prev.calendarEvents ||
+          []
+        ),
+        event,
+      ],
+    }));
+  };
+
+  const deleteCalendarEvent = (
+    id
+  ) => {
+    setDashboardData((prev) => ({
+      ...prev,
+
+      calendarEvents:
+        (
+          prev.calendarEvents ||
+          []
+        ).filter(
+          (event) =>
+            event.id !== id
+        ),
+    }));
+  };
+
   return (
     <DashboardContext.Provider
       value={{
@@ -296,6 +377,7 @@ export const DashboardProvider = ({
 
         addAttendanceSubject,
         updateAttendance,
+        deleteAttendanceSubject,
 
         addAssignment,
         deleteAssignment,
@@ -305,10 +387,14 @@ export const DashboardProvider = ({
         deleteExam,
 
         addSubject,
+        updateSubject,
         deleteSubject,
 
         setSemester,
         setCGPASemesters,
+
+        addCalendarEvent,
+        deleteCalendarEvent,
       }}
     >
       {children}
@@ -317,4 +403,6 @@ export const DashboardProvider = ({
 };
 
 export const useDashboard = () =>
-  useContext(DashboardContext);
+  useContext(
+    DashboardContext
+  );
