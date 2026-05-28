@@ -49,7 +49,7 @@ const defaultDashboardData = {
   exams: [
     {
       id: 1,
-      title: "cn internals",
+      subject: "cn internals",
       date: "2026-05-30",
     },
   ],
@@ -71,10 +71,22 @@ const defaultDashboardData = {
     current: 8.42,
 
     semesters: [
-      8.1,
-      8.3,
-      8.5,
-      8.42,
+      {
+        id: 1,
+        value: 8.1,
+      },
+      {
+        id: 2,
+        value: 8.3,
+      },
+      {
+        id: 3,
+        value: 8.5,
+      },
+      {
+        id: 4,
+        value: 8.42,
+      },
     ],
   },
 };
@@ -243,6 +255,40 @@ export const DashboardProvider = ({
     }));
   };
 
+  // cgpa
+  const setCGPASemesters = (
+    semesters
+  ) => {
+    const values =
+      semesters.map(
+        (semester) =>
+          Number(
+            semester.value
+          ) || 0
+      );
+
+    const current =
+      (
+        values.reduce(
+          (a, b) => a + b,
+          0
+        ) / values.length
+      ).toFixed(2);
+
+    setDashboardData((prev) => ({
+      ...prev,
+
+      cgpa: {
+        ...prev.cgpa,
+
+        current:
+          Number(current),
+
+        semesters,
+      },
+    }));
+  };
+
   return (
     <DashboardContext.Provider
       value={{
@@ -262,6 +308,7 @@ export const DashboardProvider = ({
         deleteSubject,
 
         setSemester,
+        setCGPASemesters,
       }}
     >
       {children}

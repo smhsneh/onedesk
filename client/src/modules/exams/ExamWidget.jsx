@@ -1,3 +1,5 @@
+import { useState } from "react";
+
 import GlassCard from "../../components/common/GlassCard";
 
 import {
@@ -6,52 +8,121 @@ import {
   X,
 } from "lucide-react";
 
-const exams = [
-  {
-    subject: "os mid sem",
-    date: "27 may",
-    remaining: "2d",
-    color: "bg-[#ff6b8a]",
-  },
-  {
-    subject: "dbms internal",
-    date: "3 june",
-    remaining: "9d",
-    color: "bg-[#ff9f68]",
-  },
-  {
-    subject: "cn end sem",
-    date: "18 june",
-    remaining: "24d",
-    color: "bg-[#7aa8ff]",
-  },
-  {
-    subject: "ai viva",
-    date: "22 june",
-    remaining: "28d",
-    color: "bg-[#8bdb81]",
-  },
-  {
-    subject: "ml practical",
-    date: "30 june",
-    remaining: "36d",
-    color: "bg-[#c19cff]",
-  },
-  {
-    subject: "java lab",
-    date: "4 july",
-    remaining: "40d",
-    color: "bg-[#ffb86b]",
-  },
-  {
-    subject: "react review",
-    date: "11 july",
-    remaining: "47d",
-    color: "bg-[#7ed6ff]",
-  },
-];
+import { useDashboard } from "../../context/DashboardContext";
 
 const ExamWidget = () => {
+  const {
+    dashboardData,
+    addExam,
+    deleteExam,
+  } = useDashboard();
+
+  const exams =
+    dashboardData.exams;
+
+  const [subject, setSubject] =
+    useState("");
+
+  const [date, setDate] =
+    useState("");
+
+  const getDaysLeft = (
+    examDate
+  ) => {
+    const today = new Date();
+
+    const target = new Date(
+      examDate
+    );
+
+    today.setHours(0, 0, 0, 0);
+
+    target.setHours(0, 0, 0, 0);
+
+    const diff =
+      target - today;
+
+    const days = Math.max(
+      0,
+      Math.ceil(
+        diff /
+          (1000 * 60 * 60 * 24)
+      )
+    );
+
+    return days === 0
+      ? "today"
+      : `${days}d`;
+  };
+
+  const getColor = (
+    examDate
+  ) => {
+    const today = new Date();
+
+    const target = new Date(
+      examDate
+    );
+
+    today.setHours(0, 0, 0, 0);
+
+    target.setHours(0, 0, 0, 0);
+
+    const diff =
+      target - today;
+
+    const days = Math.ceil(
+      diff /
+        (1000 * 60 * 60 * 24)
+    );
+
+    if (days <= 2) {
+      return "bg-[#ff6b8a]";
+    }
+
+    if (days <= 7) {
+      return "bg-[#ff9f68]";
+    }
+
+    if (days <= 14) {
+      return "bg-[#7aa8ff]";
+    }
+
+    return "bg-[#8bdb81]";
+  };
+
+  const formatDate = (
+    examDate
+  ) => {
+    return new Date(
+      examDate
+    ).toLocaleDateString(
+      "en-GB",
+      {
+        day: "numeric",
+        month: "short",
+      }
+    );
+  };
+
+  const handleAddExam = () => {
+    if (
+      !subject.trim() ||
+      !date
+    ) {
+      return;
+    }
+
+    addExam({
+      id: Date.now(),
+      subject,
+      date,
+    });
+
+    setSubject("");
+    setDate("");
+  };
+
   return (
     <GlassCard
       gradient="
@@ -128,7 +199,7 @@ const ExamWidget = () => {
         <div className="space-y-3">
           {exams.map((exam) => (
             <button
-              key={exam.subject}
+              key={exam.id}
               className="
                 w-full
 
@@ -156,7 +227,9 @@ const ExamWidget = () => {
                       h-2.5
                       rounded-full
                       shrink-0
-                      ${exam.color}
+                      ${getColor(
+                        exam.date
+                      )}
                     `}
                   />
 
@@ -167,7 +240,9 @@ const ExamWidget = () => {
 
                 <div className="flex items-center gap-2 shrink-0">
                   <span className="text-sm text-black/50">
-                    {exam.date}
+                    {formatDate(
+                      exam.date
+                    )}
                   </span>
 
                   <span
@@ -183,13 +258,25 @@ const ExamWidget = () => {
                       bg-white/50
                     "
                   >
-                    {exam.remaining}
+                    {getDaysLeft(
+                      exam.date
+                    )}
                   </span>
 
-                  <X
-                    size={15}
-                    className="text-black/25"
-                  />
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+
+                      deleteExam(
+                        exam.id
+                      );
+                    }}
+                  >
+                    <X
+                      size={15}
+                      className="text-black/25"
+                    />
+                  </button>
                 </div>
               </div>
             </button>
@@ -220,6 +307,12 @@ const ExamWidget = () => {
         <input
           type="text"
           placeholder="Exam name"
+          value={subject}
+          onChange={(e) =>
+            setSubject(
+              e.target.value
+            )
+          }
           className="
             flex-1
             min-w-0
@@ -245,6 +338,12 @@ const ExamWidget = () => {
 
         <input
           type="date"
+          value={date}
+          onChange={(e) =>
+            setDate(
+              e.target.value
+            )
+          }
           className="
             h-11
 
@@ -263,6 +362,9 @@ const ExamWidget = () => {
         />
 
         <button
+          onClick={
+            handleAddExam
+          }
           className="
             h-11
             w-11

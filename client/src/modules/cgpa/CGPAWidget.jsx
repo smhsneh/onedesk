@@ -5,15 +5,9 @@ import {
   Minus,
 } from "lucide-react";
 
-const semesters = [
-  8.4,
-  8.6,
-  8.8,
-  8.7,
-  8.9,
-  9.1,
-  8.5,
-];
+import { useState } from "react";
+
+import { useDashboard } from "../../context/DashboardContext";
 
 const scales = [
   "10.0",
@@ -22,10 +16,116 @@ const scales = [
 ];
 
 const CGPAWidget = () => {
-  const cgpa = (
-    semesters.reduce((a, b) => a + b, 0) /
-    semesters.length
-  ).toFixed(2);
+  const {
+    dashboardData,
+    setCGPASemesters,
+  } = useDashboard();
+
+  const semesters =
+    dashboardData.cgpa.semesters;
+
+  const [selectedScale, setSelectedScale] =
+    useState("10.0");
+
+  const rawCGPA =
+    semesters.reduce(
+      (a, b) =>
+        a + Number(b.value || 0),
+      0
+    ) / semesters.length;
+
+  const formatValue = (
+    value
+  ) => {
+    const number =
+      Number(value || 0);
+
+    if (
+      selectedScale === "4.0"
+    ) {
+      return (
+        (number / 10) *
+        4
+      ).toFixed(2);
+    }
+
+    if (
+      selectedScale === "%"
+    ) {
+      return (
+        number * 10
+      ).toFixed(1);
+    }
+
+    return number.toFixed(2);
+  };
+
+  const cgpa =
+    formatValue(rawCGPA);
+
+  const lastDifference =
+    semesters.length > 1
+      ? (
+          Number(
+            semesters[
+              semesters.length -
+                1
+            ].value || 0
+          ) -
+          Number(
+            semesters[
+              semesters.length -
+                2
+            ].value || 0
+          )
+        ).toFixed(2)
+      : 0;
+
+  const addSemester = () => {
+    const updated = [
+      ...semesters,
+
+      {
+        id: Date.now(),
+        value: "",
+      },
+    ];
+
+    setCGPASemesters(updated);
+  };
+
+  const removeSemester = () => {
+    if (
+      semesters.length <= 1
+    ) {
+      return;
+    }
+
+    const updated =
+      semesters.slice(
+        0,
+        semesters.length - 1
+      );
+
+    setCGPASemesters(updated);
+  };
+
+  const updateSemester = (
+    id,
+    value
+  ) => {
+    const updated =
+      semesters.map((semester) =>
+        semester.id === id
+          ? {
+              ...semester,
+              value,
+            }
+          : semester
+      );
+
+    setCGPASemesters(updated);
+  };
 
   return (
     <GlassCard
@@ -51,7 +151,7 @@ const CGPAWidget = () => {
         {/* left side */}
         <div
           className="
-            min-w-[220px]
+            w-[320px]
 
             flex
             flex-col
@@ -81,6 +181,9 @@ const CGPAWidget = () => {
             "
           >
             {cgpa}
+            {selectedScale === "%"
+              ? "%"
+              : ""}
           </h2>
 
           <p className="text-black/50 mt-3">
@@ -111,7 +214,21 @@ const CGPAWidget = () => {
               w-fit
             "
           >
-            ▼ -0.1 from last sem
+            {semesters.length > 1
+              ? `${
+                  Number(
+                    lastDifference
+                  ) >= 0
+                    ? "▲"
+                    : "▼"
+                } ${Math.abs(
+                  Number(
+                    lastDifference
+                  )
+                ).toFixed(
+                  2
+                )} from last sem`
+              : "No previous semester"}
           </div>
 
           {/* scale */}
@@ -129,9 +246,14 @@ const CGPAWidget = () => {
             </p>
 
             <div className="flex gap-2 flex-wrap">
-              {scales.map((scale, index) => (
+              {scales.map((scale) => (
                 <button
                   key={scale}
+                  onClick={() =>
+                    setSelectedScale(
+                      scale
+                    )
+                  }
                   className={`
                     h-10
 
@@ -146,7 +268,8 @@ const CGPAWidget = () => {
                     duration-300
 
                     ${
-                      index === 0
+                      selectedScale ===
+                      scale
                         ? `
                           bg-white/70
                           text-[#7a4d00]
@@ -164,44 +287,6 @@ const CGPAWidget = () => {
                 >
                   {scale}
                 </button>
-              ))}
-            </div>
-          </div>
-
-          {/* trend */}
-          <div className="mt-6">
-            <p
-              className="
-                text-xs
-                uppercase
-                tracking-[0.2em]
-                text-black/40
-                mb-3
-                font-semibold
-              "
-            >
-              trend
-            </p>
-
-            <div className="flex gap-1.5 flex-wrap">
-              {semesters.map((sem, index) => (
-                <div
-                  key={index}
-                  className={`
-                    h-10
-                    w-14
-
-                    rounded-lg
-
-                    ${
-                      sem >= 8.7
-                        ? "bg-[#b97a1f]"
-                        : sem >= 8.5
-                        ? "bg-[#d8c189]"
-                        : "bg-[#e4d3a6]"
-                    }
-                  `}
-                />
               ))}
             </div>
           </div>
@@ -244,98 +329,128 @@ const CGPAWidget = () => {
               pr-2
               pb-2
             "
+            style={{
+              scrollbarGutter:
+                "stable",
+            }}
           >
             <div className="space-y-4">
-              {semesters.map((sem, index) => (
-                <div
-                  key={index}
-                  className="flex items-center gap-4"
-                >
+              {semesters.map(
+                (sem, index) => (
                   <div
+                    key={sem.id}
                     className="
-                      min-w-[42px]
+                      grid
+                      grid-cols-[70px_1fr_70px]
+                      items-center
+                      gap-4
 
-                      text-sm
-                      font-bold
-                      text-black/70
-
-                      shrink-0
-                    "
-                  >
-                    Sem {index + 1}
-                  </div>
-
-                  {/* bar */}
-                  <div
-                    className="
-                      flex-1
-
-                      h-10
-
-                      rounded-2xl
-
-                      bg-white/35
-
-                      overflow-hidden
+                      w-full
                     "
                   >
                     <div
                       className="
-                        h-full
-
-                        bg-[#FAF9F6]
-
-                        flex
-                        items-center
-
-                        px-4
-
                         text-sm
                         font-bold
-                        text-black
-
-                        transition-all
-                        duration-500
+                        text-black/70
                       "
-                      style={{
-                        width: `${(sem / 10) * 100}%`,
-                      }}
                     >
-                      {sem}
+                      Sem {index + 1}
                     </div>
+
+                    {/* bar */}
+                    <div
+                      className="
+                        h-10
+
+                        rounded-2xl
+
+                        bg-white/35
+
+                        overflow-hidden
+
+                        w-full
+                      "
+                    >
+                      <div
+                        className="
+                          h-full
+
+                          bg-[#FAF9F6]
+
+                          flex
+                          items-center
+
+                          px-4
+
+                          text-sm
+                          font-bold
+                          text-black
+
+                          transition-all
+                          duration-500
+
+                          whitespace-nowrap
+                        "
+                        style={{
+                          width: `${Math.min(
+                            (Number(
+                              sem.value ||
+                                0
+                            ) /
+                              10) *
+                              100,
+                            100
+                          )}%`,
+                        }}
+                      >
+                        {sem.value
+                          ? formatValue(
+                              sem.value
+                            )
+                          : ""}
+                      </div>
+                    </div>
+
+                    <input
+                      type="number"
+                      step="0.01"
+                      value={sem.value}
+                      onChange={(e) =>
+                        updateSemester(
+                          sem.id,
+                          e.target.value
+                        )
+                      }
+                      className="
+                        w-[70px]
+                        h-10
+
+                        rounded-xl
+
+                        bg-white/45
+
+                        border border-white/30
+
+                        text-lg
+                        font-bold
+                        text-center
+
+                        outline-none
+
+                        shrink-0
+                      "
+                    />
                   </div>
-
-                  <div
-                    className="
-                      w-[62px]
-                      h-10
-
-                      rounded-xl
-
-                      bg-white/45
-
-                      border border-white/30
-
-                      flex
-                      items-center
-                      justify-center
-
-                      text-lg
-                      font-bold
-
-                      shrink-0
-                    "
-                  >
-                    {sem}
-                  </div>
-                </div>
-              ))}
+                )
+              )}
             </div>
           </div>
 
           {/* controls */}
           <div className="flex gap-3 mt-6 shrink-0">
             <button
+              onClick={addSemester}
               className="
                 h-12
 
@@ -364,6 +479,7 @@ const CGPAWidget = () => {
             </button>
 
             <button
+              onClick={removeSemester}
               className="
                 h-12
 
