@@ -3,7 +3,12 @@ import dotenv from "dotenv";
 import cors from "cors";
 
 import connectDB from "./config/db.js";
+
 import authRoutes from "./routes/authRoutes.js";
+import subjectRoutes from "./routes/subjectRoutes.js";
+import assignmentRoutes from "./routes/assignmentRoutes.js";
+import examRoutes from "./routes/examRoutes.js";
+import progressRoutes from "./routes/progressRoutes.js";
 
 dotenv.config();
 
@@ -27,6 +32,10 @@ app.get("/", (req, res) => {
 });
 
 app.use("/api/auth", authRoutes);
+app.use("/api/subjects", subjectRoutes);
+app.use("/api/assignments", assignmentRoutes);
+app.use("/api/exams", examRoutes);
+app.use("/api/progress", progressRoutes);
 
 app.use((req, res) => {
   res.status(404).json({
