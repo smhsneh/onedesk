@@ -1,14 +1,19 @@
-// import Landing from "./pages/Landing";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 
-// function App() {
-//   return <Landing />;
-// }
-
-
+import Landing from "./pages/Landing";
 import Dashboard from "./pages/Dashboard";
+import Auth from "./pages/Auth";
 
 function App() {
-  return <Dashboard />;
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Landing />} />
+        <Route path="/auth" element={<Auth />} />
+        <Route path="/dashboard" element={<Dashboard />} />
+      </Routes>
+    </BrowserRouter>
+  );
 }
 
 export default App;
