@@ -124,7 +124,7 @@ const SubjectsWidget = () => {
               font-semibold
             "
           >
-            subjects · sem 4
+            subjects
           </p>
         </div>
 
