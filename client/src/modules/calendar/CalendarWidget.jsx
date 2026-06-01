@@ -6,6 +6,7 @@ import "react-calendar/dist/Calendar.css";
 import {
   useRef,
   useState,
+  useEffect,
 } from "react";
 
 import {
@@ -16,7 +17,7 @@ import {
   Trash2,
 } from "lucide-react";
 
-import { useDashboard } from "../../context/DashboardContext";
+import calendarService from "./calendarService";
 
 const colors = [
   "#d95c5c",
@@ -48,18 +49,27 @@ const CalendarWidget = () => {
   const [selectedColor, setSelectedColor] =
     useState(colors[0]);
 
+  const [events, setEvents] =
+    useState([]);
+
   const clickTimeout =
     useRef(null);
 
-  const {
-    dashboardData,
-    addCalendarEvent,
-    deleteCalendarEvent,
-  } = useDashboard();
+  useEffect(() => {
+    fetchEvents();
+  }, []);
 
-  const events =
-    dashboardData.calendarEvents ||
-    [];
+  const fetchEvents =
+    async () => {
+      try {
+        const data =
+          await calendarService.getEvents();
+
+        setEvents(data);
+      } catch (error) {
+        console.error(error);
+      }
+    };
 
   const getEventsForDate = (
     currentDate
@@ -77,29 +87,33 @@ const CalendarWidget = () => {
     );
   };
 
-  const handleCreateEvent = () => {
-    if (!title.trim()) {
-      return;
-    }
+  const handleCreateEvent =
+    async () => {
+      if (!title.trim()) {
+        return;
+      }
 
-    addCalendarEvent({
-      id: Date.now(),
+      try {
+        const newEvent =
+          await calendarService.createEvent({
+            title,
+            date: selectedDate,
+            color: selectedColor,
+          });
 
-      title,
+        setEvents((prev) => [
+          ...prev,
+          newEvent,
+        ]);
 
-      date: selectedDate,
+        setTitle("");
+        setSelectedColor(colors[0]);
 
-      color: selectedColor,
-    });
-
-    setTitle("");
-
-    setSelectedColor(
-      colors[0]
-    );
-
-    setOpen(false);
-  };
+        setOpen(false);
+      } catch (error) {
+        console.error(error);
+      }
+    };
 
   return (
     <>
@@ -317,7 +331,7 @@ const CalendarWidget = () => {
                         ) => (
                           <div
                             key={
-                              event.id
+                              event._id
                             }
                             className="
                               max-w-full
@@ -572,7 +586,7 @@ const CalendarWidget = () => {
                   (event) => (
                     <div
                       key={
-                        event.id
+                        event._id
                       }
                       className="
                         rounded-2xl
@@ -610,11 +624,22 @@ const CalendarWidget = () => {
                       </div>
 
                       <button
-                        onClick={() =>
-                          deleteCalendarEvent(
-                            event.id
-                          )
-                        }
+                        onClick={async () => {
+                          try {
+                            await calendarService.deleteEvent(
+                              event._id
+                            );
+
+                            setEvents((prev) =>
+                              prev.filter(
+                                (item) =>
+                                  item._id !== event._id
+                              )
+                            );
+                          } catch (error) {
+                            console.error(error);
+                          }
+                        }}
                         className="
                           h-8
                           w-8

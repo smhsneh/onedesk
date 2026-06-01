@@ -9,6 +9,8 @@ import subjectRoutes from "./routes/subjectRoutes.js";
 import assignmentRoutes from "./routes/assignmentRoutes.js";
 import examRoutes from "./routes/examRoutes.js";
 import progressRoutes from "./routes/progressRoutes.js";
+import attendanceRoutes from "./routes/attendanceRoutes.js";
+import calendarRoutes from "./routes/calendarRoutes.js";
 
 dotenv.config();
 
@@ -32,10 +34,36 @@ app.get("/", (req, res) => {
 });
 
 app.use("/api/auth", authRoutes);
-app.use("/api/subjects", subjectRoutes);
-app.use("/api/assignments", assignmentRoutes);
-app.use("/api/exams", examRoutes);
-app.use("/api/progress", progressRoutes);
+
+app.use(
+  "/api/subjects",
+  subjectRoutes
+);
+
+app.use(
+  "/api/assignments",
+  assignmentRoutes
+);
+
+app.use(
+  "/api/exams",
+  examRoutes
+);
+
+app.use(
+  "/api/progress",
+  progressRoutes
+);
+
+app.use(
+  "/api/attendance",
+  attendanceRoutes
+);
+
+app.use(
+  "/api/calendar",
+  calendarRoutes
+);
 
 app.use((req, res) => {
   res.status(404).json({
@@ -43,8 +71,11 @@ app.use((req, res) => {
   });
 });
 
-const PORT = process.env.PORT || 5000;
+const PORT =
+  process.env.PORT || 5000;
 
 app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+  console.log(
+    `Server running on port ${PORT}`
+  );
 });

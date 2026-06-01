@@ -5,9 +5,12 @@ import {
   Minus,
 } from "lucide-react";
 
-import { useState } from "react";
+import {
+  useState,
+  useEffect,
+} from "react";
 
-import { useDashboard } from "../../context/DashboardContext";
+import cgpaService from "./cgpaService";
 
 const scales = [
   "10.0",
@@ -16,23 +19,54 @@ const scales = [
 ];
 
 const CGPAWidget = () => {
-  const {
-    dashboardData,
-    setCGPASemesters,
-  } = useDashboard();
+  const [semesters, setSemesters] =
+  useState([]);
 
-  const semesters =
-    dashboardData.cgpa.semesters;
+const [selectedScale, setSelectedScale] =
+  useState("10.0");
 
-  const [selectedScale, setSelectedScale] =
-    useState("10.0");
+const [loading, setLoading] =
+  useState(true);
+
+  useEffect(() => {
+    const loadProgress =
+      async () => {
+        try {
+          const data =
+            await cgpaService.getProgress();
+
+          const mapped =
+            data.semesters.map(
+              (semester) => ({
+                id:
+                  semester.semesterNumber,
+                value:
+                  semester.gpa,
+              })
+            );
+
+          setSemesters(mapped);
+        } catch (error) {
+          console.error(error);
+        } finally {
+          setLoading(false);
+        }
+      };
+
+    loadProgress();
+  }, []);
 
   const rawCGPA =
-    semesters.reduce(
-      (a, b) =>
-        a + Number(b.value || 0),
-      0
-    ) / semesters.length;
+    semesters.length > 0
+      ? semesters.reduce(
+          (a, b) =>
+            a +
+            Number(
+              b.value || 0
+            ),
+          0
+        ) / semesters.length
+      : 0;
 
   const formatValue = (
     value
@@ -60,6 +94,29 @@ const CGPAWidget = () => {
     return number.toFixed(2);
   };
 
+  const saveProgress =
+    async (updated) => {
+      try {
+        const payload =
+          updated.map(
+            (semester, index) => ({
+              semesterNumber:
+                index + 1,
+
+              gpa: Number(
+                semester.value || 0
+              ),
+            })
+          );
+
+        await cgpaService.updateProgress(
+          payload
+        );
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
   const cgpa =
     formatValue(rawCGPA);
 
@@ -81,20 +138,21 @@ const CGPAWidget = () => {
         ).toFixed(2)
       : 0;
 
-  const addSemester = () => {
+  const addSemester = async () => {
     const updated = [
       ...semesters,
-
       {
         id: Date.now(),
         value: "",
       },
     ];
 
-    setCGPASemesters(updated);
+    setSemesters(updated);
+
+    await saveProgress(updated);
   };
 
-  const removeSemester = () => {
+  const removeSemester = async () => {
     if (
       semesters.length <= 1
     ) {
@@ -107,24 +165,29 @@ const CGPAWidget = () => {
         semesters.length - 1
       );
 
-    setCGPASemesters(updated);
+    setSemesters(updated);
+
+    await saveProgress(updated);
   };
 
-  const updateSemester = (
+  const updateSemester = async (
     id,
     value
   ) => {
     const updated =
-      semesters.map((semester) =>
-        semester.id === id
-          ? {
-              ...semester,
-              value,
-            }
-          : semester
+      semesters.map(
+        (semester) =>
+          semester.id === id
+            ? {
+                ...semester,
+                value,
+              }
+            : semester
       );
 
-    setCGPASemesters(updated);
+    setSemesters(updated);
+
+    await saveProgress(updated);
   };
 
   return (

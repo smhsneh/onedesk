@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 import GlassCard from "../../components/common/GlassCard";
 
@@ -9,20 +9,13 @@ import {
   X,
 } from "lucide-react";
 
-import { useDashboard } from "../../context/DashboardContext";
+import attendanceService from "./attendanceService";
 
 import { calculateAttendance } from "../../utils/attendanceCalc";
 
 const AttendanceWidget = () => {
-  const {
-    dashboardData,
-    updateAttendance,
-    addAttendanceSubject,
-    deleteAttendanceSubject,
-  } = useDashboard();
-
-  const attendance =
-    dashboardData.attendance;
+  const [attendance, setAttendance] =
+    useState([]);
 
   const [open, setOpen] =
     useState(false);
@@ -36,6 +29,22 @@ const AttendanceWidget = () => {
   const [total, setTotal] =
     useState("");
 
+  useEffect(() => {
+    loadAttendance();
+  }, []);
+
+  const loadAttendance =
+    async () => {
+      try {
+        const data =
+          await attendanceService.getAll();
+
+        setAttendance(data);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
   const dangerCount =
     attendance.filter((item) => {
       const percentage =
@@ -47,35 +56,56 @@ const AttendanceWidget = () => {
       return percentage < 75;
     }).length;
 
-  const handleAddSubject = () => {
-    if (!subject.trim()) return;
+  const handleAddSubject =
+    async () => {
+      if (!subject.trim()) return;
 
-    const attendedNumber =
-      Number(attended);
+      try {
+        await attendanceService.create({
+          subject,
+          attended:
+            Number(attended),
+          total: Number(total),
+        });
 
-    const totalNumber =
-      Number(total);
+        await loadAttendance();
 
-    if (
-      Number.isNaN(attendedNumber) ||
-      Number.isNaN(totalNumber)
-    ) {
-      return;
-    }
+        setSubject("");
+        setAttended("");
+        setTotal("");
 
-    addAttendanceSubject({
-      id: Date.now(),
-      subject,
-      attended: attendedNumber,
-      total: totalNumber,
-    });
+        setOpen(false);
+      } catch (error) {
+        console.error(error);
+      }
+    };
 
-    setSubject("");
-    setAttended("");
-    setTotal("");
+  const handleUpdate =
+    async (id, data) => {
+      try {
+        await attendanceService.update(
+          id,
+          data
+        );
 
-    setOpen(false);
-  };
+        await loadAttendance();
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+  const handleDelete =
+    async (id) => {
+      try {
+        await attendanceService.delete(
+          id
+        );
+
+        await loadAttendance();
+      } catch (error) {
+        console.error(error);
+      }
+    };
 
   return (
     <>
@@ -189,19 +219,15 @@ const AttendanceWidget = () => {
           <div className="space-y-4">
             {attendance.map((item) => (
               <AttendanceRow
-                key={item.id}
-                id={item.id}
+                key={item._id}
+                id={item._id}
                 subject={item.subject}
                 attended={
                   item.attended
                 }
                 total={item.total}
-                onUpdate={
-                  updateAttendance
-                }
-                onDelete={
-                  deleteAttendanceSubject
-                }
+                onUpdate={handleUpdate}
+                onDelete={handleDelete}
               />
             ))}
           </div>

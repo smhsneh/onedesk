@@ -8,19 +8,60 @@ import {
   AlertTriangle,
 } from "lucide-react";
 
-import { useDashboard } from "../../context/DashboardContext";
+import {
+  useEffect,
+  useState,
+} from "react";
+
+import subjectService from "../subjects/subjectService";
+import assignmentService from "../assignments/assignmentService";
+import examService from "../exams/examService";
+import attendanceService from "../attendance/attendanceService";
 
 import { generateOverviewAlerts } from "./overviewUtils";
 
 const OverviewWidget = () => {
-  const {
-    dashboardData,
-  } = useDashboard();
+  const [alerts, setAlerts] =
+    useState([]);
 
-  const alerts =
-    generateOverviewAlerts(
-      dashboardData
-    );
+  useEffect(() => {
+    loadOverview();
+  }, []);
+
+  const loadOverview =
+    async () => {
+      try {
+        const [
+          assignments,
+          exams,
+          attendance,
+          subjects,
+        ] = await Promise.all([
+          assignmentService.getAssignments(),
+          examService.getExams(),
+          attendanceService.getAll(),
+          subjectService.getSubjects(),
+        ]);
+
+        const dashboardData = {
+          assignments,
+          exams,
+          attendance,
+          subjects,
+        };
+
+        const generatedAlerts =
+          generateOverviewAlerts(
+            dashboardData
+          );
+
+        setAlerts(
+          generatedAlerts
+        );
+      } catch (error) {
+        console.error(error);
+      }
+    };
 
   const highPriorityCount =
     alerts.filter(

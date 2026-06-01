@@ -1,14 +1,25 @@
+import api from "../../services/axiosInstance";
+
 const cgpaService = {
-  getSemesters: async () => {
-    return [];
+  getProgress: async () => {
+    const response = await api.get(
+      "/progress"
+    );
+
+    return response.data;
   },
 
-  addSemester: async (data) => {
-    return data;
-  },
+  updateProgress: async (
+    semesters
+  ) => {
+    const response = await api.put(
+      "/progress",
+      {
+        semesters,
+      }
+    );
 
-  deleteSemester: async (id) => {
-    return id;
+    return response.data;
   },
 };
 

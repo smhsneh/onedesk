@@ -271,11 +271,39 @@ function Dashboard() {
                 {widgets.map((widget) => {
                   const WidgetComponent = widgetMap[widget];
 
-                  return (
-                    <WidgetComponent key={widget} />
-                  );
+                  return <WidgetComponent key={widget} />;
                 })}
               </BentoGrid>
+              {/* footer */}
+              <div className="flex justify-center py-10">
+                <div
+                  className="
+      px-5
+      py-2
+
+      rounded-full
+
+      bg-white/20
+      backdrop-blur-xl
+
+      border border-white/30
+
+      text-xs
+      md:text-sm
+
+      font-semibold
+
+      tracking-[0.15em]
+      uppercase
+
+      text-black/45
+
+      shadow-[0_8px_30px_rgba(0,0,0,0.05)]
+    "
+                >
+                  made by snehal © 2026
+                </div>
+              </div>
             </div>
           </div>
         </div>

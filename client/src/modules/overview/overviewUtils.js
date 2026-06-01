@@ -54,7 +54,7 @@ export const generateOverviewAlerts = (
 
       if (percentage < 75) {
         alerts.push({
-          id: `attendance-${subject.id}`,
+          id: `attendance-${subject._id}`,
 
           title: `${subject.subject} attendance below 75%`,
 
@@ -75,22 +75,31 @@ export const generateOverviewAlerts = (
         return;
       }
 
-      let priority =
-        "medium";
+      const daysLeft =
+        getDaysLeft(
+          assignment.dueDate
+        );
 
-      if (
-        assignment.due ===
-        "today"
-      ) {
+      let priority =
+        "low";
+
+      if (daysLeft <= 1) {
         priority = "high";
+      } else if (
+        daysLeft <= 3
+      ) {
+        priority = "medium";
       }
 
       alerts.push({
-        id: `assignment-${assignment.id}`,
+        id: `assignment-${assignment._id}`,
 
         title: assignment.title,
 
-        time: assignment.due,
+        time:
+          daysLeft <= 0
+            ? "today"
+            : `${daysLeft} days`,
 
         priority,
       });
@@ -102,10 +111,11 @@ export const generateOverviewAlerts = (
     (exam) => {
       const daysLeft =
         getDaysLeft(
-          exam.date
+          exam.examDate
         );
 
-      let priority = "low";
+      let priority =
+        "low";
 
       if (daysLeft <= 2) {
         priority = "high";
@@ -116,9 +126,10 @@ export const generateOverviewAlerts = (
       }
 
       alerts.push({
-        id: `exam-${exam.id}`,
+        id: `exam-${exam._id}`,
 
-        title: exam.subject,
+        title:
+          exam.examName,
 
         time:
           daysLeft <= 0
