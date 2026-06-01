@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 import GlassCard from "../../components/common/GlassCard";
 
 import AssignmentRow from "./AssignmentRow";
+import assignmentService from "./assignmentService";
 
 import {
   ClipboardList,
@@ -10,18 +11,12 @@ import {
   X,
 } from "lucide-react";
 
-import { useDashboard } from "../../context/DashboardContext";
-
 const AssignmentWidget = () => {
-  const {
-    dashboardData,
-    toggleAssignment,
-    deleteAssignment,
-    addAssignment,
-  } = useDashboard();
+  const [assignments, setAssignments] =
+    useState([]);
 
-  const assignments =
-    dashboardData.assignments;
+  const [loading, setLoading] =
+    useState(true);
 
   const [open, setOpen] =
     useState(false);
@@ -32,23 +27,92 @@ const AssignmentWidget = () => {
   const [due, setDue] =
     useState("");
 
-  const handleAddAssignment = () => {
-    if (!title.trim()) return;
+  useEffect(() => {
+    const fetchAssignments =
+      async () => {
+        try {
+          const data =
+            await assignmentService.getAssignments();
 
-    const newAssignment = {
-      id: Date.now(),
-      title,
-      due: due || "soon",
-      completed: false,
+          setAssignments(data);
+        } catch (error) {
+          console.error(error);
+        } finally {
+          setLoading(false);
+        }
+      };
+
+    fetchAssignments();
+  }, []);
+
+  const handleAddAssignment =
+    async () => {
+      if (!title.trim()) return;
+
+      try {
+        const newAssignment =
+          await assignmentService.createAssignment(
+            {
+              title,
+              dueDate:
+                due ||
+                new Date()
+                  .toISOString()
+                  .split("T")[0],
+            }
+          );
+
+        setAssignments((prev) => [
+          newAssignment,
+          ...prev,
+        ]);
+
+        setTitle("");
+        setDue("");
+
+        setOpen(false);
+      } catch (error) {
+        console.error(error);
+      }
     };
 
-    addAssignment(newAssignment);
+  const handleToggleAssignment =
+    async (id) => {
+      try {
+        const updated =
+          await assignmentService.toggleAssignment(
+            id
+          );
 
-    setTitle("");
-    setDue("");
+        setAssignments((prev) =>
+          prev.map((assignment) =>
+            assignment._id === id
+              ? updated
+              : assignment
+          )
+        );
+      } catch (error) {
+        console.error(error);
+      }
+    };
 
-    setOpen(false);
-  };
+  const handleDeleteAssignment =
+    async (id) => {
+      try {
+        await assignmentService.deleteAssignment(
+          id
+        );
+
+        setAssignments((prev) =>
+          prev.filter(
+            (assignment) =>
+              assignment._id !== id
+          )
+        );
+      } catch (error) {
+        console.error(error);
+      }
+    };
 
   return (
     <>
@@ -63,7 +127,6 @@ const AssignmentWidget = () => {
           row-span-3
         "
       >
-        {/* header */}
         <div className="flex items-start justify-between mb-6 shrink-0">
           <div>
             <p
@@ -144,7 +207,6 @@ const AssignmentWidget = () => {
           </button>
         </div>
 
-        {/* body */}
         <div
           className="
             flex-1
@@ -156,96 +218,103 @@ const AssignmentWidget = () => {
             pb-2
           "
         >
-          <div className="space-y-3">
-            {assignments.map(
-              (assignment) => (
-                <AssignmentRow
-                  key={
-                    assignment.id
-                  }
-                  id={assignment.id}
-                  title={
-                    assignment.title
-                  }
-                  due={
-                    assignment.due
-                  }
-                  completed={
-                    assignment.completed
-                  }
-                  onToggle={
-                    toggleAssignment
-                  }
-                  onDelete={
-                    deleteAssignment
-                  }
-                />
-              )
-            )}
-          </div>
+          {loading ? (
+            <p className="text-sm text-black/40">
+              Loading...
+            </p>
+          ) : (
+            <div className="space-y-3">
+              {assignments.map(
+                (assignment) => (
+                  <AssignmentRow
+                    key={
+                      assignment._id
+                    }
+                    id={
+                      assignment._id
+                    }
+                    title={
+                      assignment.title
+                    }
+                    due={new Date(
+                      assignment.dueDate
+                    ).toLocaleDateString()}
+                    completed={
+                      assignment.completed
+                    }
+                    onToggle={
+                      handleToggleAssignment
+                    }
+                    onDelete={
+                      handleDeleteAssignment
+                    }
+                  />
+                )
+              )}
+            </div>
+          )}
 
-          {/* empty state */}
-          {assignments.length ===
-            0 && (
-            <div
-              className="
-                h-full
-
-                flex
-                flex-col
-                items-center
-                justify-center
-
-                text-center
-
-                py-10
-              "
-            >
+          {!loading &&
+            assignments.length ===
+              0 && (
               <div
                 className="
-                  h-16
-                  w-16
-
-                  rounded-3xl
-
-                  bg-white/35
-
-                  border border-white/30
+                  h-full
 
                   flex
+                  flex-col
                   items-center
                   justify-center
 
-                  mb-4
+                  text-center
+
+                  py-10
                 "
               >
-                <ClipboardList
-                  size={28}
-                  className="text-black/30"
-                />
+                <div
+                  className="
+                    h-16
+                    w-16
+
+                    rounded-3xl
+
+                    bg-white/35
+
+                    border border-white/30
+
+                    flex
+                    items-center
+                    justify-center
+
+                    mb-4
+                  "
+                >
+                  <ClipboardList
+                    size={28}
+                    className="text-black/30"
+                  />
+                </div>
+
+                <h3
+                  className="
+                    text-lg
+                    font-semibold
+                    text-black/55
+                    mb-2
+                  "
+                >
+                  no assignments
+                </h3>
+
+                <p className="text-sm text-black/40">
+                  everything looks
+                  clear for now.
+                </p>
               </div>
-
-              <h3
-                className="
-                  text-lg
-                  font-semibold
-                  text-black/55
-                  mb-2
-                "
-              >
-                no assignments
-              </h3>
-
-              <p className="text-sm text-black/40">
-                everything looks
-                clear for now.
-              </p>
-            </div>
-          )}
+            )}
         </div>
       </GlassCard>
 
-      {/* modal */}
       {open && (
         <div
           className="
@@ -281,64 +350,26 @@ const AssignmentWidget = () => {
               p-6
             "
           >
-            {/* top */}
             <div className="flex items-center justify-between mb-6">
-              <div>
-                <p
-                  className="
-                    text-[12px]
-                    uppercase
-                    tracking-[0.28em]
-                    text-black/40
-                    mb-2
-                    font-semibold
-                  "
-                >
-                  create
-                </p>
-
-                <h2
-                  className="
-                    text-2xl
-                    font-black
-                    tracking-[-0.04em]
-                  "
-                >
-                  new assignment
-                </h2>
-              </div>
+              <h2
+                className="
+                  text-2xl
+                  font-black
+                  tracking-[-0.04em]
+                "
+              >
+                new assignment
+              </h2>
 
               <button
                 onClick={() =>
                   setOpen(false)
                 }
-                className="
-                  h-10
-                  w-10
-
-                  rounded-2xl
-
-                  bg-white/40
-
-                  border border-white/30
-
-                  flex
-                  items-center
-                  justify-center
-
-                  hover:bg-white/60
-
-                  transition-all
-                "
               >
-                <X
-                  size={18}
-                  className="text-black/45"
-                />
+                <X size={18} />
               </button>
             </div>
 
-            {/* inputs */}
             <div className="space-y-4">
               <input
                 type="text"
@@ -351,25 +382,16 @@ const AssignmentWidget = () => {
                 }
                 className="
                   w-full
-
                   rounded-2xl
-
                   bg-white/40
-
                   border border-white/30
-
-                  px-4
-                  py-4
-
+                  px-4 py-4
                   outline-none
-
-                  placeholder:text-black/30
                 "
               />
 
               <input
-                type="text"
-                placeholder="due date"
+                type="date"
                 value={due}
                 onChange={(e) =>
                   setDue(
@@ -378,47 +400,27 @@ const AssignmentWidget = () => {
                 }
                 className="
                   w-full
-
                   rounded-2xl
-
                   bg-white/40
-
                   border border-white/30
-
-                  px-4
-                  py-4
-
+                  px-4 py-4
                   outline-none
-
-                  placeholder:text-black/30
                 "
               />
             </div>
 
-            {/* action */}
             <button
               onClick={
                 handleAddAssignment
               }
               className="
                 mt-6
-
                 w-full
-
                 rounded-2xl
-
                 bg-black
-
                 text-white
-
                 py-4
-
                 font-semibold
-
-                transition-all
-                duration-300
-
-                hover:scale-[1.02]
               "
             >
               add assignment

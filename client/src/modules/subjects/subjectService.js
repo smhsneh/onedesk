@@ -1,24 +1,26 @@
+import api from "../../services/axiosInstance";
+
 const subjectService = {
   getSubjects: async () => {
-    return [];
+    const response = await api.get("/subjects");
+    return response.data;
   },
 
   createSubject: async (data) => {
-    return data;
-  },
+    const response = await api.post(
+      "/subjects",
+      data
+    );
 
-  updateSubject: async (
-    id,
-    data
-  ) => {
-    return {
-      id,
-      ...data,
-    };
+    return response.data;
   },
 
   deleteSubject: async (id) => {
-    return id;
+    const response = await api.delete(
+      `/subjects/${id}`
+    );
+
+    return response.data;
   },
 };
 

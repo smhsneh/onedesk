@@ -1,4 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+
+import examService from "./examService";
 
 import GlassCard from "../../components/common/GlassCard";
 
@@ -8,23 +10,31 @@ import {
   X,
 } from "lucide-react";
 
-import { useDashboard } from "../../context/DashboardContext";
-
 const ExamWidget = () => {
-  const {
-    dashboardData,
-    addExam,
-    deleteExam,
-  } = useDashboard();
-
-  const exams =
-    dashboardData.exams;
+  const [exams, setExams] =
+    useState([]);
 
   const [subject, setSubject] =
     useState("");
 
   const [date, setDate] =
     useState("");
+
+  useEffect(() => {
+    const loadExams =
+      async () => {
+        try {
+          const data =
+            await examService.getExams();
+
+          setExams(data);
+        } catch (error) {
+          console.error(error);
+        }
+      };
+
+    loadExams();
+  }, []);
 
   const getDaysLeft = (
     examDate
@@ -36,7 +46,6 @@ const ExamWidget = () => {
     );
 
     today.setHours(0, 0, 0, 0);
-
     target.setHours(0, 0, 0, 0);
 
     const diff =
@@ -46,7 +55,10 @@ const ExamWidget = () => {
       0,
       Math.ceil(
         diff /
-          (1000 * 60 * 60 * 24)
+          (1000 *
+            60 *
+            60 *
+            24)
       )
     );
 
@@ -65,7 +77,6 @@ const ExamWidget = () => {
     );
 
     today.setHours(0, 0, 0, 0);
-
     target.setHours(0, 0, 0, 0);
 
     const diff =
@@ -73,20 +84,20 @@ const ExamWidget = () => {
 
     const days = Math.ceil(
       diff /
-        (1000 * 60 * 60 * 24)
+        (1000 *
+          60 *
+          60 *
+          24)
     );
 
-    if (days <= 2) {
+    if (days <= 2)
       return "bg-[#ff6b8a]";
-    }
 
-    if (days <= 7) {
+    if (days <= 7)
       return "bg-[#ff9f68]";
-    }
 
-    if (days <= 14) {
+    if (days <= 14)
       return "bg-[#7aa8ff]";
-    }
 
     return "bg-[#8bdb81]";
   };
@@ -105,23 +116,55 @@ const ExamWidget = () => {
     );
   };
 
-  const handleAddExam = () => {
-    if (
-      !subject.trim() ||
-      !date
-    ) {
-      return;
-    }
+  const handleAddExam =
+    async () => {
+      if (
+        !subject.trim() ||
+        !date
+      ) {
+        return;
+      }
 
-    addExam({
-      id: Date.now(),
-      subject,
-      date,
-    });
+      try {
+        const newExam =
+          await examService.createExam(
+            {
+              examName:
+                subject,
+              examDate:
+                date,
+            }
+          );
 
-    setSubject("");
-    setDate("");
-  };
+        setExams((prev) => [
+          ...prev,
+          newExam,
+        ]);
+
+        setSubject("");
+        setDate("");
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+  const handleDeleteExam =
+    async (id) => {
+      try {
+        await examService.deleteExam(
+          id
+        );
+
+        setExams((prev) =>
+          prev.filter(
+            (exam) =>
+              exam._id !== id
+          )
+        );
+      } catch (error) {
+        console.error(error);
+      }
+    };
 
   return (
     <GlassCard
@@ -135,7 +178,6 @@ const ExamWidget = () => {
         row-span-3
       "
     >
-      {/* header */}
       <div className="flex items-center justify-between mb-6 shrink-0">
         <div>
           <p
@@ -181,7 +223,6 @@ const ExamWidget = () => {
         </button>
       </div>
 
-      {/* scroll section */}
       <div
         className="
           flex-1
@@ -193,13 +234,14 @@ const ExamWidget = () => {
           pb-2
         "
         style={{
-          scrollbarGutter: "stable",
+          scrollbarGutter:
+            "stable",
         }}
       >
         <div className="space-y-3">
           {exams.map((exam) => (
             <div
-              key={exam.id}
+              key={exam._id}
               className="
                 w-full
 
@@ -228,20 +270,22 @@ const ExamWidget = () => {
                       rounded-full
                       shrink-0
                       ${getColor(
-                        exam.date
+                        exam.examDate
                       )}
                     `}
                   />
 
                   <span className="capitalize font-semibold truncate">
-                    {exam.subject}
+                    {
+                      exam.examName
+                    }
                   </span>
                 </div>
 
                 <div className="flex items-center gap-2 shrink-0">
                   <span className="text-sm text-black/50">
                     {formatDate(
-                      exam.date
+                      exam.examDate
                     )}
                   </span>
 
@@ -259,16 +303,16 @@ const ExamWidget = () => {
                     "
                   >
                     {getDaysLeft(
-                      exam.date
+                      exam.examDate
                     )}
                   </span>
 
                   <button
-                    onClick={() => {
-                      deleteExam(
-                        exam.id
-                      );
-                    }}
+                    onClick={() =>
+                      handleDeleteExam(
+                        exam._id
+                      )
+                    }
                     className="
                       h-7
                       w-7
@@ -297,7 +341,6 @@ const ExamWidget = () => {
         </div>
       </div>
 
-      {/* add tray */}
       <div
         className="
           mt-4

@@ -1,25 +1,20 @@
 import GlassCard from "../../components/common/GlassCard";
-
 import SubjectRow from "./SubjectRow";
+import subjectService from "./subjectService";
 
 import {
   BookOpen,
   Plus,
 } from "lucide-react";
 
-import { useState } from "react";
-
-import { useDashboard } from "../../context/DashboardContext";
+import {
+  useState,
+  useEffect,
+} from "react";
 
 const SubjectsWidget = () => {
-  const {
-    dashboardData,
-    addSubject,
-    deleteSubject,
-  } = useDashboard();
-
-  const subjects =
-    dashboardData.subjects;
+  const [subjects, setSubjects] =
+    useState([]);
 
   const [name, setName] =
     useState("");
@@ -27,19 +22,83 @@ const SubjectsWidget = () => {
   const [credits, setCredits] =
     useState("");
 
-  const handleAddSubject = () => {
-    if (!name.trim()) return;
+  const [loading, setLoading] =
+    useState(true);
 
-    addSubject({
-      id: Date.now(),
-      name,
-      credits:
-        Number(credits) || 0,
-    });
+  useEffect(() => {
+    const fetchSubjects =
+      async () => {
+        try {
+          const data =
+            await subjectService.getSubjects();
 
-    setName("");
-    setCredits("");
-  };
+          setSubjects(data);
+        } catch (error) {
+          console.error(
+            "Failed to fetch subjects",
+            error
+          );
+        } finally {
+          setLoading(false);
+        }
+      };
+
+    fetchSubjects();
+  }, []);
+
+  const handleAddSubject =
+    async () => {
+      if (!name.trim()) return;
+
+      try {
+        const newSubject =
+          await subjectService.createSubject(
+            {
+              name,
+              credits:
+                Number(credits) || 4,
+
+              attendedClasses: 0,
+
+              totalClasses: 0,
+            }
+          );
+
+        setSubjects((prev) => [
+          newSubject,
+          ...prev,
+        ]);
+
+        setName("");
+        setCredits("");
+      } catch (error) {
+        console.error(
+          "Failed to create subject",
+          error
+        );
+      }
+    };
+
+  const handleDeleteSubject =
+    async (id) => {
+      try {
+        await subjectService.deleteSubject(
+          id
+        );
+
+        setSubjects((prev) =>
+          prev.filter(
+            (subject) =>
+              subject._id !== id
+          )
+        );
+      } catch (error) {
+        console.error(
+          "Failed to delete subject",
+          error
+        );
+      }
+    };
 
   return (
     <GlassCard
@@ -53,7 +112,6 @@ const SubjectsWidget = () => {
         row-span-2
       "
     >
-      {/* header */}
       <div className="flex items-center justify-between mb-6 shrink-0">
         <div>
           <p
@@ -101,7 +159,6 @@ const SubjectsWidget = () => {
         </button>
       </div>
 
-      {/* scroll section */}
       <div
         className="
           flex-1
@@ -116,24 +173,33 @@ const SubjectsWidget = () => {
           scrollbarGutter: "stable",
         }}
       >
-        <div className="space-y-3">
-          {subjects.map((subject) => (
-            <SubjectRow
-              key={subject.id}
-              id={subject.id}
-              subject={subject.name}
-              credits={
-                subject.credits
-              }
-              onDelete={
-                deleteSubject
-              }
-            />
-          ))}
-        </div>
+        {loading ? (
+          <p className="text-sm text-black/40">
+            Loading...
+          </p>
+        ) : (
+          <div className="space-y-3">
+            {subjects.map(
+              (subject) => (
+                <SubjectRow
+                  key={subject._id}
+                  id={subject._id}
+                  subject={
+                    subject.name
+                  }
+                  credits={
+                    subject.credits
+                  }
+                  onDelete={
+                    handleDeleteSubject
+                  }
+                />
+              )
+            )}
+          </div>
+        )}
       </div>
 
-      {/* add subject */}
       <div
         className="
           mt-4
