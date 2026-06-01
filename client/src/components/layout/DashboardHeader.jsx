@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 import {
   ChevronDown,
@@ -9,6 +10,8 @@ import {
   User,
   Settings,
 } from "lucide-react";
+
+import { useAuth } from "../../context/AuthContext";
 
 const semesters = [
   "Semester 1",
@@ -37,6 +40,9 @@ const modes = [
 ];
 
 const DashboardHeader = () => {
+  const navigate = useNavigate();
+  const { logout, user } = useAuth();
+
   const [activeMode, setActiveMode] =
     useState("College");
 
@@ -51,6 +57,11 @@ const DashboardHeader = () => {
 
   const semesterRef = useRef(null);
   const profileRef = useRef(null);
+
+  const handleLogout = () => {
+    logout();
+    navigate("/auth");
+  };
 
   useEffect(() => {
     const handleClickOutside = (e) => {
@@ -86,13 +97,10 @@ const DashboardHeader = () => {
     <div
       className="
         w-full
-
         pt-5
         mb-8
-
         px-5
         md:px-7
-
         relative
         z-[999]
       "
@@ -100,25 +108,15 @@ const DashboardHeader = () => {
       <div
         className="
           relative
-
           overflow-visible
-
           w-full
-
           min-h-[92px]
-
           rounded-[42px]
-
           bg-white/60
-
           backdrop-blur-2xl
-
           border border-white/40
-
           shadow-[0_10px_40px_rgba(0,0,0,0.05)]
-
           px-7
-
           flex
           items-center
           justify-between
@@ -126,7 +124,6 @@ const DashboardHeader = () => {
       >
         {/* LEFT */}
         <div className="flex items-center gap-10">
-          {/* logo */}
           <div
             className="
               text-[42px]
@@ -141,7 +138,6 @@ const DashboardHeader = () => {
             onedesk
           </div>
 
-          {/* modes */}
           <div className="flex items-center gap-2">
             {modes.map((mode) => {
               const Icon = mode.icon;
@@ -157,42 +153,31 @@ const DashboardHeader = () => {
                   }
                   className={`
                     h-12
-
                     px-5
-
                     rounded-2xl
-
                     flex
                     items-center
                     gap-2
-
                     text-sm
                     font-semibold
-
                     transition-all
                     duration-300
-
                     ${
                       active
                         ? `
                           bg-white
-
                           text-black
-
                           shadow-[0_4px_20px_rgba(0,0,0,0.06)]
-
                           scale-[1.02]
                         `
                         : `
                           text-black/45
-
                           hover:bg-white/40
                         `
                     }
                   `}
                 >
                   <Icon size={16} />
-
                   {mode.name}
                 </button>
               );
@@ -207,9 +192,7 @@ const DashboardHeader = () => {
               text-xs
               uppercase
               tracking-[0.28em]
-
               text-black/35
-
               font-semibold
             "
           >
@@ -223,13 +206,13 @@ const DashboardHeader = () => {
               tracking-[-0.03em]
             "
           >
-            User
+            {user?.name || "User"}
           </h3>
         </div>
 
         {/* RIGHT */}
         <div className="flex items-center gap-3">
-          {/* semester dropdown */}
+          {/* Semester Dropdown */}
           <div
             ref={semesterRef}
             className="relative"
@@ -242,25 +225,17 @@ const DashboardHeader = () => {
               }
               className="
                 h-12
-
                 px-5
-
                 rounded-2xl
-
                 bg-white/55
-
                 border border-white/35
-
                 flex
                 items-center
                 gap-3
-
                 text-sm
                 font-semibold
-
                 transition-all
                 duration-300
-
                 hover:bg-white
               "
             >
@@ -270,10 +245,8 @@ const DashboardHeader = () => {
                 size={16}
                 className={`
                   text-black/45
-
                   transition-all
                   duration-300
-
                   ${
                     semesterOpen
                       ? "rotate-180"
@@ -287,24 +260,15 @@ const DashboardHeader = () => {
               <div
                 className="
                   absolute
-
                   top-[64px]
                   right-0
-
                   w-[210px]
-
                   rounded-[28px]
-
                   bg-white/88
-
                   backdrop-blur-2xl
-
                   border border-white/40
-
                   shadow-[0_15px_50px_rgba(0,0,0,0.08)]
-
                   p-2
-
                   z-[9999]
                 "
               >
@@ -322,20 +286,14 @@ const DashboardHeader = () => {
                     }}
                     className={`
                       w-full
-
                       h-11
-
                       rounded-2xl
-
                       px-4
-
                       text-left
                       text-sm
                       font-medium
-
                       transition-all
                       duration-200
-
                       ${
                         selectedSemester ===
                         sem
@@ -356,7 +314,7 @@ const DashboardHeader = () => {
             )}
           </div>
 
-          {/* profile */}
+          {/* Profile Menu */}
           <div
             ref={profileRef}
             className="relative"
@@ -370,23 +328,16 @@ const DashboardHeader = () => {
               className="
                 h-12
                 w-12
-
                 rounded-full
-
                 bg-white/60
-
                 border border-white/35
-
                 flex
                 items-center
                 justify-center
-
                 transition-all
                 duration-300
-
                 hover:bg-white
                 hover:scale-105
-
                 active:scale-95
               "
             >
@@ -400,82 +351,57 @@ const DashboardHeader = () => {
               <div
                 className="
                   absolute
-
                   top-[64px]
                   right-0
-
                   w-[190px]
-
                   rounded-[28px]
-
                   bg-white/88
-
                   backdrop-blur-2xl
-
                   border border-white/40
-
                   shadow-[0_15px_50px_rgba(0,0,0,0.08)]
-
                   p-2
-
                   z-[9999]
                 "
               >
                 <button
                   className="
                     w-full
-
                     h-11
-
                     rounded-2xl
-
                     px-4
-
                     flex
                     items-center
                     gap-3
-
                     text-sm
                     font-medium
-
                     transition-all
                     duration-200
-
                     hover:bg-white
                   "
                 >
                   <Settings size={16} />
-
                   Settings
                 </button>
 
                 <button
+                  onClick={handleLogout}
                   className="
                     w-full
-
                     h-11
-
                     rounded-2xl
-
                     px-4
-
                     flex
                     items-center
                     gap-3
-
                     text-sm
                     font-medium
-
                     text-[#d94b68]
-
                     transition-all
                     duration-200
-
                     hover:bg-[#fff1f4]
                   "
                 >
                   <LogOut size={16} />
-
                   Logout
                 </button>
               </div>

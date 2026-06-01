@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
 
 const features = [
   { label: "study workspace", num: "01", color: "#cf76a5" },
@@ -15,6 +16,7 @@ const features = [
 ];
 
 function Landing() {
+  const navigate = useNavigate();
   return (
     <div
       style={{
@@ -380,7 +382,8 @@ function Landing() {
 
           {/* BUTTON */}
           <motion.button
-            whileHover={{
+  onClick={() => navigate("/auth")}
+  whileHover={{
               scale: 1.03,
               y: -2,
             }}

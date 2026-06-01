@@ -1,9 +1,67 @@
-
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 
 function Auth() {
   const [isLogin, setIsLogin] = useState(true);
+
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [mode, setMode] = useState("college");
+
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  const navigate = useNavigate();
+  const { login, signup } = useAuth();
+
+  const resetForm = () => {
+    setName("");
+    setEmail("");
+    setPassword("");
+    setMode("college");
+    setError("");
+  };
+
+  const handleModeSwitch = (loginMode) => {
+    setIsLogin(loginMode);
+    resetForm();
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    setError("");
+    setLoading(true);
+
+    try {
+      if (isLogin) {
+        await login({
+          email,
+          password,
+        });
+      } else {
+        await signup({
+          name,
+          email,
+          password,
+          mode,
+        });
+      }
+
+      navigate("/dashboard");
+    } catch (err) {
+      setError(
+        err?.response?.data?.message ||
+          err?.message ||
+          "Something went wrong"
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div
@@ -25,7 +83,7 @@ function Auth() {
         }}
       />
 
-      {/* Pink */}
+      {/* Background Blobs */}
       <div
         style={{
           position: "absolute",
@@ -39,7 +97,6 @@ function Auth() {
         }}
       />
 
-      {/* Blue */}
       <div
         style={{
           position: "absolute",
@@ -53,7 +110,6 @@ function Auth() {
         }}
       />
 
-      {/* Purple */}
       <div
         style={{
           position: "absolute",
@@ -67,7 +123,6 @@ function Auth() {
         }}
       />
 
-      {/* Yellow */}
       <div
         style={{
           position: "absolute",
@@ -81,7 +136,6 @@ function Auth() {
         }}
       />
 
-      {/* Soft Ambient Glow */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -163,7 +217,8 @@ function Auth() {
         {/* Tabs */}
         <div className="flex mb-10">
           <button
-            onClick={() => setIsLogin(true)}
+            type="button"
+            onClick={() => handleModeSwitch(true)}
             className="flex-1 pb-4 font-semibold transition"
             style={{
               color: isLogin ? "#cf76a5" : "#a1a1aa",
@@ -176,7 +231,8 @@ function Auth() {
           </button>
 
           <button
-            onClick={() => setIsLogin(false)}
+            type="button"
+            onClick={() => handleModeSwitch(false)}
             className="flex-1 pb-4 font-semibold transition"
             style={{
               color: !isLogin ? "#cf76a5" : "#a1a1aa",
@@ -201,45 +257,95 @@ function Auth() {
               {isLogin ? "Welcome back" : "Create account"}
             </h1>
 
-            <p className="text-center text-zinc-500 mt-2 mb-8">
+            <p className="text-center text-zinc-500 mt-2">
               {isLogin
                 ? "Continue your workspace"
                 : "Start building your workspace"}
             </p>
 
-            <form className="space-y-5">
+            {error && (
+              <div className="mt-4 mb-6 text-center text-sm text-red-500 font-medium">
+                {error}
+              </div>
+            )}
+
+            <form onSubmit={handleSubmit} className="space-y-5 mt-8">
               {!isLogin && (
-                <input
-                  type="text"
-                  placeholder="Full name"
-                  className="w-full h-14 px-4 rounded-2xl border border-white/60 bg-white/55 backdrop-blur-md outline-none focus:ring-4 focus:ring-pink-100"
-                />
+                <>
+                  <input
+                    type="text"
+                    placeholder="Full name"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    required
+                    className="w-full h-14 px-4 rounded-2xl border border-white/60 bg-white/55 backdrop-blur-md outline-none focus:ring-4 focus:ring-pink-100"
+                  />
+
+                  {/* Mode Selector */}
+                  <div className="p-1 rounded-2xl bg-white/55 border border-white/60 flex">
+                    <button
+                      type="button"
+                      onClick={() => setMode("college")}
+                      className={`flex-1 h-12 rounded-xl font-medium transition ${
+                        mode === "college"
+                          ? "bg-white shadow-sm"
+                          : "text-zinc-500"
+                      }`}
+                    >
+                      College
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => setMode("placement")}
+                      className={`flex-1 h-12 rounded-xl font-medium transition ${
+                        mode === "placement"
+                          ? "bg-white shadow-sm"
+                          : "text-zinc-500"
+                      }`}
+                    >
+                      Placement
+                    </button>
+                  </div>
+                </>
               )}
 
               <input
                 type="email"
                 placeholder="Email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
                 className="w-full h-14 px-4 rounded-2xl border border-white/60 bg-white/55 backdrop-blur-md outline-none focus:ring-4 focus:ring-pink-100"
               />
 
               <input
                 type="password"
                 placeholder="Password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
                 className="w-full h-14 px-4 rounded-2xl border border-white/60 bg-white/55 backdrop-blur-md outline-none focus:ring-4 focus:ring-pink-100"
               />
 
               <button
                 type="submit"
-                className="w-full h-14 rounded-2xl font-semibold text-zinc-800 transition-all duration-300 hover:scale-[1.01]"
+                disabled={loading}
+                className="w-full h-14 rounded-2xl font-semibold text-zinc-800 transition-all duration-300 hover:scale-[1.01] disabled:opacity-60 disabled:cursor-not-allowed"
                 style={{
                   background:
                     "linear-gradient(135deg,#fff7fb,#f7fbff,#faf8ff)",
                   border: "1px solid rgba(255,255,255,0.9)",
-                  boxShadow:
-                    "0 10px 30px rgba(0,0,0,0.04)",
+                  boxShadow: "0 10px 30px rgba(0,0,0,0.04)",
                 }}
               >
-                {isLogin ? "Log in" : "Create account"}
+                {loading
+                  ? isLogin
+                    ? "Logging in..."
+                    : "Creating account..."
+                  : isLogin
+                  ? "Log in"
+                  : "Create account"}
               </button>
             </form>
 
@@ -249,7 +355,8 @@ function Auth() {
                 : "Already have an account?"}
 
               <button
-                onClick={() => setIsLogin(!isLogin)}
+                type="button"
+                onClick={() => handleModeSwitch(!isLogin)}
                 className="ml-2 font-semibold"
                 style={{ color: "#cf76a5" }}
               >
