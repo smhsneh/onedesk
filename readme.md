@@ -10,6 +10,12 @@ a dual-mode student operating system ; built to manage academics, placements, pl
 
 ---
 
+## live links
+- **live demo** : [https://onedeskbysneh.vercel.app](https://onedeskbysneh.vercel.app)
+- **backend api** : [https://onedeskapi.onrender.com](https://onedeskapi.onrender.com)
+
+---
+
 ## 📑  overview
 onedesk is a full-stack student productivity platform designed to replace the fragmented collection of tools students rely on throughout their academic and placement journey. instead of juggling separate calendars, spreadsheets, placement trackers, academic portals, and productivity apps ; everything lives in one personalized workspace.
 the platform operates in two independent modes:
@@ -57,7 +63,7 @@ landing → authentication → dashboard → college mode / placement mode
 
 ---
 
-## 📑 project structure
+## project structure
 ```text
 onedesk/
 ├── client/
@@ -74,7 +80,7 @@ onedesk/
 
 ---
 
-## api reference
+## 👾 api reference
 
 ### authentication
 `post /auth/signup` | `post /auth/login` | `get /auth/me` | `delete /auth/delete` | `patch /auth/mode`
