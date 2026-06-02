@@ -8,51 +8,42 @@ import AssignmentWidget from "../modules/assignments/AssignmentWidget";
 import CGPAWidget from "../modules/cgpa/CGPAWidget";
 import SubjectsWidget from "../modules/subjects/SubjectsWidget";
 import ExamWidget from "../modules/exams/ExamWidget";
+import ApplicationWidget from "../modules/applications/ApplicationWidget";
+import OAWidget from "../modules/oa/OAWidget";
+import ResourceWidget from "../modules/resources/ResourceWidget";
 
 import { dashboardConfig } from "../utils/dashboardConfig";
+import { useAuth } from "../context/AuthContext";
 
 const widgetMap = {
   overview: OverviewWidget,
+
   attendance: AttendanceWidget,
   subjects: SubjectsWidget,
-  calendar: CalendarWidget,
   assignments: AssignmentWidget,
   exams: ExamWidget,
   cgpa: CGPAWidget,
+
+  applications: ApplicationWidget,
+  oa: OAWidget,
+  resources: ResourceWidget,
+
+  calendar: CalendarWidget,
 };
 
 function Dashboard() {
-  const mode = "college";
-
+  const { user } = useAuth();
+  const mode = user?.mode || "college";
   const widgets = dashboardConfig[mode];
 
   return (
     <div
-      className="
-        min-h-screen
-        pb-20
-
-        relative
-        overflow-hidden
-      "
-      style={{
-        fontFamily: "Manrope, sans-serif",
-      }}
+      className="min-h-screen pb-20 relative overflow-hidden"
+      style={{ fontFamily: "Manrope, sans-serif" }}
     >
       {/* background image */}
       <div
-        className="
-          absolute
-          inset-0
-
-          scale-[1.03]
-
-          blur-[10px]
-
-          opacity-[0.92]
-
-          pointer-events-none
-        "
+        className="absolute inset-0 scale-[1.03] blur-[10px] opacity-[0.92] pointer-events-none"
         style={{
           backgroundImage: 'url("/images/bg2.jpg")',
           backgroundSize: "cover",
@@ -64,86 +55,18 @@ function Dashboard() {
       />
 
       {/* subtle cinematic overlay */}
-      <div
-        className="
-          absolute
-          inset-0
-
-          bg-white/[0.08]
-
-          pointer-events-none
-        "
-      />
+      <div className="absolute inset-0 bg-white/[0.08] pointer-events-none" />
 
       {/* soft atmospheric glows */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div
-          className="
-            absolute
-
-            top-[-10%]
-            left-[-8%]
-
-            w-[520px]
-            h-[520px]
-
-            rounded-full
-
-            bg-[#ff99c8]/12
-
-            blur-[120px]
-          "
-        />
-
-        <div
-          className="
-            absolute
-
-            bottom-[-15%]
-            right-[-10%]
-
-            w-[620px]
-            h-[620px]
-
-            rounded-full
-
-            bg-[#a9def9]/12
-
-            blur-[140px]
-          "
-        />
-
-        <div
-          className="
-            absolute
-
-            top-[35%]
-            right-[22%]
-
-            w-[420px]
-            h-[420px]
-
-            rounded-full
-
-            bg-[#e4c1f9]/10
-
-            blur-[110px]
-          "
-        />
+        <div className="absolute top-[-10%] left-[-8%] w-[520px] h-[520px] rounded-full bg-[#ff99c8]/12 blur-[120px]" />
+        <div className="absolute bottom-[-15%] right-[-10%] w-[620px] h-[620px] rounded-full bg-[#a9def9]/12 blur-[140px]" />
+        <div className="absolute top-[35%] right-[22%] w-[420px] h-[420px] rounded-full bg-[#e4c1f9]/10 blur-[110px]" />
       </div>
 
       {/* grain */}
       <div
-        className="
-          absolute
-          inset-0
-
-          opacity-[0.025]
-
-          mix-blend-soft-light
-
-          pointer-events-none
-        "
+        className="absolute inset-0 opacity-[0.025] mix-blend-soft-light pointer-events-none"
         style={{
           backgroundImage:
             'url("https://grainy-gradients.vercel.app/noise.svg")',
@@ -152,17 +75,7 @@ function Dashboard() {
 
       <div className="relative z-10">
         {/* header */}
-        <div
-          className="
-            sticky
-            top-0
-            z-50
-
-            backdrop-blur-3xl
-
-            bg-white/42
-          "
-        >
+        <div className="sticky top-0 z-50 backdrop-blur-3xl bg-white/42">
           <DashboardHeader />
         </div>
 
@@ -170,95 +83,23 @@ function Dashboard() {
         <div className="px-5 md:px-7 mt-6">
           <div
             className="
-              relative
-
-              rounded-[42px]
-
-              bg-white/28
-
-              backdrop-blur-[30px]
-
+              relative rounded-[42px]
+              bg-white/28 backdrop-blur-[30px]
               border border-white/35
-
               shadow-[0_25px_80px_rgba(0,0,0,0.10)]
-
-              p-5
-              md:p-6
-
-              overflow-visible
+              p-5 md:p-6 overflow-visible
             "
           >
             {/* internal glow */}
             <div className="absolute inset-0 pointer-events-none">
-              <div
-                className="
-                  absolute
-
-                  -top-20
-                  left-20
-
-                  h-[280px]
-                  w-[280px]
-
-                  rounded-full
-
-                  bg-white/30
-
-                  blur-[100px]
-                "
-              />
-
-              <div
-                className="
-                  absolute
-
-                  bottom-0
-                  right-10
-
-                  h-[240px]
-                  w-[240px]
-
-                  rounded-full
-
-                  bg-[#ffe5ec]/30
-
-                  blur-[100px]
-                "
-              />
-
-              <div
-                className="
-                  absolute
-
-                  top-[35%]
-                  left-[40%]
-
-                  h-[220px]
-                  w-[220px]
-
-                  rounded-full
-
-                  bg-[#d6e4ff]/25
-
-                  blur-[90px]
-                "
-              />
+              <div className="absolute -top-20 left-20 h-[280px] w-[280px] rounded-full bg-white/30 blur-[100px]" />
+              <div className="absolute bottom-0 right-10 h-[240px] w-[240px] rounded-full bg-[#ffe5ec]/30 blur-[100px]" />
+              <div className="absolute top-[35%] left-[40%] h-[220px] w-[220px] rounded-full bg-[#d6e4ff]/25 blur-[90px]" />
             </div>
 
             {/* ultra subtle card grain */}
             <div
-              className="
-                absolute
-                inset-0
-
-                opacity-[0.018]
-
-                rounded-[42px]
-
-                mix-blend-overlay
-
-                pointer-events-none
-              "
+              className="absolute inset-0 opacity-[0.018] rounded-[42px] mix-blend-overlay pointer-events-none"
               style={{
                 backgroundImage:
                   'url("https://grainy-gradients.vercel.app/noise.svg")',
@@ -270,36 +111,22 @@ function Dashboard() {
               <BentoGrid>
                 {widgets.map((widget) => {
                   const WidgetComponent = widgetMap[widget];
-
                   return <WidgetComponent key={widget} />;
                 })}
               </BentoGrid>
+
               {/* footer */}
               <div className="flex justify-center py-10">
                 <div
                   className="
-      px-5
-      py-2
-
-      rounded-full
-
-      bg-white/20
-      backdrop-blur-xl
-
-      border border-white/30
-
-      text-xs
-      md:text-sm
-
-      font-semibold
-
-      tracking-[0.15em]
-      uppercase
-
-      text-black/45
-
-      shadow-[0_8px_30px_rgba(0,0,0,0.05)]
-    "
+                    px-5 py-2 rounded-full
+                    bg-white/20 backdrop-blur-xl
+                    border border-white/30
+                    text-xs md:text-sm font-semibold
+                    tracking-[0.15em] uppercase
+                    text-black/45
+                    shadow-[0_8px_30px_rgba(0,0,0,0.05)]
+                  "
                 >
                   made by snehal © 2026
                 </div>

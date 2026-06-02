@@ -11,6 +11,9 @@ import examRoutes from "./routes/examRoutes.js";
 import progressRoutes from "./routes/progressRoutes.js";
 import attendanceRoutes from "./routes/attendanceRoutes.js";
 import calendarRoutes from "./routes/calendarRoutes.js";
+import applicationRoutes from "./routes/applicationRoutes.js";
+import oaDeadlineRoutes from "./routes/oaDeadlineRoutes.js";
+import resourceRoutes from "./routes/resourceRoutes.js";
 
 dotenv.config();
 
@@ -20,7 +23,10 @@ const app = express();
 
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: [
+      "http://localhost:5173",
+      process.env.CLIENT_URL,
+    ],
     credentials: true,
   })
 );
@@ -63,6 +69,21 @@ app.use(
 app.use(
   "/api/calendar",
   calendarRoutes
+);
+
+app.use(
+  "/api/applications",
+  applicationRoutes
+);
+
+app.use(
+  "/api/resources",
+  resourceRoutes
+);
+
+app.use(
+  "/api/oa-deadlines",
+  oaDeadlineRoutes
 );
 
 app.use((req, res) => {

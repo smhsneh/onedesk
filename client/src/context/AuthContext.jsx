@@ -9,6 +9,7 @@ import {
   login as loginService,
   signup as signupService,
   getMe,
+  updateMode as updateModeService,
 } from "../services/authService";
 
 const AuthContext = createContext(null);
@@ -50,6 +51,16 @@ export const AuthProvider = ({ children }) => {
     setUser(null);
   };
 
+  const updateMode = async (mode) => {
+    try {
+      const updatedUser = await updateModeService(mode);
+
+      setUser(updatedUser);
+    } catch (error) {
+      throw error;
+    }
+  };
+
   useEffect(() => {
     const restoreSession = async () => {
       const token = localStorage.getItem("token");
@@ -86,6 +97,7 @@ export const AuthProvider = ({ children }) => {
     login,
     signup,
     logout,
+    updateMode,
     isAuthenticated: !!user,
   };
 

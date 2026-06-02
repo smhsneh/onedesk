@@ -143,3 +143,90 @@ export const generateOverviewAlerts = (
 
   return alerts;
 };
+
+export const generatePlacementAlerts =
+  ({
+    applications,
+    oaDeadlines,
+  }) => {
+    const alerts = [];
+
+    oaDeadlines.forEach(
+      (oa) => {
+        if (
+          oa.status ===
+          "Completed"
+        ) {
+          return;
+        }
+
+        const daysLeft =
+          getDaysLeft(
+            oa.deadline
+          );
+
+        let priority =
+          "low";
+
+        if (daysLeft <= 1) {
+          priority = "high";
+        } else if (
+          daysLeft <= 3
+        ) {
+          priority =
+            "medium";
+        }
+
+        alerts.push({
+          id: `oa-${oa._id}`,
+
+          title: `${oa.company} OA`,
+
+          time:
+            daysLeft <= 0
+              ? "today"
+              : `${daysLeft} days`,
+
+          priority,
+        });
+      }
+    );
+
+    applications.forEach(
+      (application) => {
+        if (
+          application.status ===
+          "Interview"
+        ) {
+          alerts.push({
+            id: `interview-${application._id}`,
+
+            title: `${application.company} interview stage`,
+
+            time: "active",
+
+            priority:
+              "high",
+          });
+        }
+
+        if (
+          application.status ===
+          "Offer"
+        ) {
+          alerts.push({
+            id: `offer-${application._id}`,
+
+            title: `${application.company} offer received`,
+
+            time: "success",
+
+            priority:
+              "low",
+          });
+        }
+      }
+    );
+
+    return alerts;
+  };

@@ -32,9 +32,11 @@ const modes = [
 
 const DashboardHeader = () => {
   const navigate = useNavigate();
-  const { logout, user } = useAuth();
+  const { logout, user, updateMode } = useAuth();
 
-  const [activeMode, setActiveMode] = useState("College");
+  // Derived from user.mode in DB — no local state needed
+  const activeMode = user?.mode === "placement" ? "Placement" : "College";
+
   const [selectedSemester, setSelectedSemester] = useState("Semester 4");
   const [semesterOpen, setSemesterOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
@@ -198,7 +200,7 @@ const DashboardHeader = () => {
                 return (
                   <button
                     key={mode.name}
-                    onClick={() => setActiveMode(mode.name)}
+                    onClick={() => updateMode(mode.name.toLowerCase())}
                     className={`
                       h-12
                       px-5
@@ -437,7 +439,6 @@ const DashboardHeader = () => {
         </div>
       </div>
 
-      {/* Modal rendered via portal directly into document.body */}
       {deleteModal}
     </>
   );

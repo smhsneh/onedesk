@@ -89,6 +89,35 @@ export const getMe = async (req, res) => {
   res.status(200).json(req.user);
 };
 
+export const updateMode = async (req, res) => {
+  try {
+    const { mode } = req.body;
+
+    const user = await User.findById(req.user._id);
+
+    if (!user) {
+      return res.status(404).json({
+        message: "User not found",
+      });
+    }
+
+    user.mode = mode;
+
+    await user.save();
+
+    res.status(200).json({
+      id: user._id,
+      name: user.name,
+      email: user.email,
+      mode: user.mode,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: "Failed to update mode",
+    });
+  }
+};
+
 export const deleteAccount = async (req, res) => {
   try {
     const userId = req.user._id;

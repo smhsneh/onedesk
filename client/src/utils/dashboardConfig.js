@@ -11,9 +11,9 @@ export const dashboardConfig = {
 
   placement: [
     "overview",
-    "dsa",
     "applications",
     "oa",
-    "interviews",
+    "resources",
+    "calendar",
   ],
 };
